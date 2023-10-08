@@ -3,11 +3,15 @@
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
 
 	export let data;
 
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
+	
+	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -18,11 +22,6 @@
 
 		return () => data.subscription.unsubscribe();
 	});
-
-	// Floating UI for Popups
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
-	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 </script>
 
 <!-- App Shell -->
@@ -38,6 +37,6 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	<!-- Page Route Content -->
+
 	<slot />
 </AppShell>
