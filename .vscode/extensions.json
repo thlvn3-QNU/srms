@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "csstools.postcss",
+        "PKief.material-icon-theme",
+        "svelte.svelte-vscode",
+        "Gruntfuggly.todo-tree"
+	]
+}
