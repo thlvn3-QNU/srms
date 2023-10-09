@@ -12,9 +12,11 @@
 	<title>SRMS - Login</title>
 </svelte:head>
 
-<div class="flex justify-center items-center align-middle h-full">
+<div class="flex flex-col justify-center items-center align-middle h-full">
+    <img src="$lib/logo.jpg" alt="QNU Logo" class="w-32">
+    <br />
 	<div class="w-9/12 lg:w-1/3">
-		<h2 class="h2">{formHeader[formType]}</h2>
+		<h2 class="h2 text-center">{formHeader[formType]}</h2>
 		{#if formType === 0}
 			<Auth
 				supabaseClient={data.supabase}
@@ -23,7 +25,6 @@
 				showLinks={false}
 				appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
 			/>
-            <br />
 			<a
 				href={'#'}
 				on:click={() => {
@@ -38,7 +39,6 @@
 				showLinks={false}
 				appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
 			/>
-            <br />
 			<a
 				href={'#'}
 				on:click={() => {
