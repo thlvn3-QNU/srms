@@ -1,4 +1,3 @@
-<!-- src/routes/account/+page.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
@@ -11,14 +10,13 @@
 	let profileForm: HTMLFormElement;
 	let loading = false;
 
-	let avatarUrl: string = profile?.avatar_url ?? '';
-
 	let fullName: string = profile?.full_name ?? '';
 	let username: string = profile?.username ?? '';
 	let dateOfBirth: Date = profile?.date_of_birth ?? '';
 	let phoneNumber: number = profile?.phone_number ?? '';
 	let gender: boolean = profile?.gender ?? '';
 
+	// vô hiệu hoá nút "Cập nhật" khi form đang submit
 	const handleSubmit = () => {
 		loading = true;
 		return async () => {
