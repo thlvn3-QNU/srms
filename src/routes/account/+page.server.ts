@@ -10,7 +10,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 	const { data: profile } = await supabase
 		.from('profiles')
 		.select(`username, full_name, date_of_birth, gender, address, phone_number, avatar_url`)
-		.eq('id', session?.user.id)
+		.eq('id', session.user.id)
 		.single();
 
 	return { session, profile };

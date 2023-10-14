@@ -24,16 +24,15 @@
 	});
 </script>
 
-<!-- App Shell -->
-<AppShell>
+<AppShell scrollbarGutter="auto">
+	
 	<svelte:fragment slot="header">
-		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">asdf</strong>
+				<strong class="text-xl uppercase">Tra cứu kết quả học tập</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<p>initial setup làm project</p>
+				<p>profile pic here</p>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
