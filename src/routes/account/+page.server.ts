@@ -19,48 +19,35 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 export const actions = {
 	update: async ({ request, locals: { supabase, getSession } }) => {
 		const formData = await request.formData();
+		const session = await getSession();
 
-		const full_name = formData.get('fullName') as string;
+		const full_name = formData.get('full_name') as string;
 		const username = formData.get('username') as string;
 		const date_of_birth = formData.get('date_of_birth') as string;
 		const gender = formData.get('gender') as string;
 		const phone_number = formData.get('phone_number') as string;
 
-		const session = await getSession();
+		// TODO: figure out whether you should try this or not
+		// const { full_name, username, date_of_birth, gender , phone_number } = formDataObject;
+
+		const profileData = {
+			full_name,
+			username,
+			date_of_birth,
+			gender: gender === 'men',
+			phone_number
+		};
 
 		const { error } = await supabase.from('profiles').upsert({
 			id: session?.user.id,
-			full_name,
-			username,
-            date_of_birth,
-            gender: (gender === "men" ? true : false),
-            phone_number,
-			updated_at: new Date()
+			updated_at: new Date(),
+			...profileData
 		});
 
 		if (error) {
-			return fail(500, {
-				full_name,
-                username,
-                date_of_birth,
-                gender,
-                phone_number
-			});
+			return fail(500, profileData);
 		}
 
-		return {
-			full_name,
-			username,
-            date_of_birth,
-            gender,
-            phone_number
-		};
-	},
-	signout: async ({ locals: { supabase, getSession } }) => {
-		const session = await getSession();
-		if (session) {
-			await supabase.auth.signOut();
-			throw redirect(303, '/');
-		}
+		return profileData;
 	}
 };
