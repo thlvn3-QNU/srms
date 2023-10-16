@@ -1,3 +1,4 @@
+// xác thực để lấy phiên đăng nhập từ supabase và chuyển hướng đến trang account
 // src/routes/auth/callback/+server.ts
 import { redirect } from '@sveltejs/kit';
 
