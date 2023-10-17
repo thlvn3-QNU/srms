@@ -16,7 +16,7 @@
 
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
-	
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	onMount(() => {
@@ -37,14 +37,14 @@
 <Drawer>
 	<h2 class="p-4">Navigation</h2>
 	<hr />
-	<DrawerComponent />
+	<DrawerComponent {profile} />
 </Drawer>
 
 <AppShell scrollbarGutter="auto" slotSidebarLeft="bg-surface-500/5 w-0 lg:w-64">
 	<svelte:fragment slot="sidebarLeft">
-		<DrawerComponent />
+		<DrawerComponent {profile} />
 	</svelte:fragment>
-	
+
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
