@@ -17,6 +17,9 @@
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
 
+	// only show sidebar/burger button when logged in
+	$: drawerDisplay = !session ? 'w-0' : 'w-0 lg:w-64';
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	onMount(() => {
@@ -30,6 +33,7 @@
 	});
 
 	function drawerOpen(): void {
+		if (!session) return;
 		drawerStore.open({});
 	}
 </script>
@@ -37,25 +41,28 @@
 <Drawer>
 	<h2 class="p-4">Navigation</h2>
 	<hr />
-	<DrawerComponent {profile} />
+	<DrawerComponent {supabase} {profile} />
 </Drawer>
 
-<AppShell scrollbarGutter="auto" slotSidebarLeft="bg-surface-500/5 w-0 lg:w-64">
+<AppShell scrollbarGutter="auto" slotSidebarLeft="bg-surface-500/5 {drawerDisplay}">
 	<svelte:fragment slot="sidebarLeft">
-		<DrawerComponent {profile} />
+		<DrawerComponent {supabase} {profile} />
 	</svelte:fragment>
 
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<div>
-					<BurgerBtn onclickEvent={drawerOpen} />
+					{#if session}
+						<BurgerBtn onclickEvent={drawerOpen} />
+					{/if}
 					<strong class="text-xl uppercase">Tra cứu kết quả học tập</strong>
 				</div>
 			</svelte:fragment>
+			
 			<svelte:fragment slot="trail">
 				<div class="hidden lg:block">
-					<p>{profile?.full_name}</p>
+					<p>{profile?.full_name || ''}</p>
 				</div>
 			</svelte:fragment>
 		</AppBar>
