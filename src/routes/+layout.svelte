@@ -39,7 +39,7 @@
 </script>
 
 <Drawer>
-	<h2 class="p-4">Navigation</h2>
+	<h2 class="p-4">Tra cứu kết quả học tập</h2>
 	<hr />
 	<DrawerComponent {supabase} {profile} />
 </Drawer>
@@ -59,7 +59,7 @@
 					<strong class="text-xl uppercase">Tra cứu kết quả học tập</strong>
 				</div>
 			</svelte:fragment>
-			
+
 			<svelte:fragment slot="trail">
 				<div class="hidden lg:block">
 					<p>{profile?.full_name || ''}</p>
