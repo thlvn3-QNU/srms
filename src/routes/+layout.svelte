@@ -14,8 +14,8 @@
 
 	export let data;
 
-	let { supabase, session } = data;
-	$: ({ supabase, session } = data);
+	let { supabase, session, profile } = data;
+	$: ({ supabase, session, profile } = data);
 	
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -51,6 +51,11 @@
 				<div>
 					<BurgerBtn onclickEvent={drawerOpen} />
 					<strong class="text-xl uppercase">Tra cứu kết quả học tập</strong>
+				</div>
+			</svelte:fragment>
+			<svelte:fragment slot="trail">
+				<div class="hidden lg:block">
+					<p>{profile?.full_name}</p>
 				</div>
 			</svelte:fragment>
 		</AppBar>
