@@ -11,7 +11,5 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 		.from('profiles')
 		.select(`id, student_id, full_name, date_of_birth, phone_number`);
 
-    console.log(profiles);
-
 	return { session, profiles };
 };

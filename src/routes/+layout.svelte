@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { invalidate } from '$app/navigation';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Modal } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { initializeStores, storePopup, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import BurgerBtn from '$lib/BurgerBtn.svelte';
@@ -39,6 +39,8 @@
 	}
 </script>
 
+<!-- Singleton UI components -->
+<Modal />
 <Drawer width="w-72">
 	<h2 class="p-4">Tra cứu kết quả học tập</h2>
 	<hr />
