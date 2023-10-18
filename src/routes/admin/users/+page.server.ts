@@ -9,7 +9,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
 	const { data: profiles } = await supabase
 		.from('profiles')
-		.select(`id, student_id, full_name, date_of_birth, phone_number`);
+		.select(`id, student_id, full_name, date_of_birth, phone_number, permission`);
 
 	return { session, profiles };
 };

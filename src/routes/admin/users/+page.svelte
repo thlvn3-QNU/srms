@@ -33,6 +33,7 @@
 		component: modalComponent
 	};
 
+    // Hiển thị modal chi tiết người dùng 
 	function selectedEntry(meta: any) {
 		const userid = meta.id;
 		console.log(userid);
@@ -44,6 +45,7 @@
 <br />
 <!-- TODO: use paginator -->
 <!-- TODO: searchable entries -->
+<!-- TODO: Use native html table for more flexiblity-->
 <Table source={tableProfiles} interactive={true} on:selected={selectedEntry} />
 <br />
 <p>Bấm chọn người dùng để xem và chỉnh sửa thông tin.</p>
