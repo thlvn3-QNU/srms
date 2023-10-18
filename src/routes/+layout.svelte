@@ -1,9 +1,10 @@
 <script lang="ts">
 	import '../app.postcss';
 	import DrawerComponent from '$lib/Drawer.svelte';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
-	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { invalidate } from '$app/navigation';
+	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { initializeStores, storePopup, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import BurgerBtn from '$lib/BurgerBtn.svelte';
@@ -38,7 +39,7 @@
 	}
 </script>
 
-<Drawer>
+<Drawer width="w-72">
 	<h2 class="p-4">Tra cứu kết quả học tập</h2>
 	<hr />
 	<DrawerComponent {supabase} {profile} />
@@ -68,5 +69,7 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<slot />
+	<div class="p-6">
+		<slot />
+	</div>
 </AppShell>

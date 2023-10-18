@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 
 
 	if (session) {
-		throw redirect(303, '/account'); // TODO: đổi route sang đường khác sau khi đăng nhập 
+		throw redirect(303, '/account');
 	}
 
 	return { url: url.origin };
