@@ -29,7 +29,7 @@
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Tra cứu kết quả học tập</strong>
+				<strong class="text-xl uppercase">CSRM |ADMIN</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<p>profile pic here</p>

@@ -16,6 +16,30 @@ input {
 	@apply input;
 }
 
-button, input[type="submit"] {
+button,
+input[type='submit'] {
 	@apply btn;
+}
+
+@layer components {
+	td {
+		@apply text-center;
+	}
+	table,
+	th,
+	td {
+		@apply border border-solid border-black;
+	}
+	th {
+		@apply bg-blue-400;
+	}
+	.edit-input {
+		@apply ml-40 w-[500px] outline-none px-2 py-1 shadow;
+	}
+	label {
+		@apply flex-1;
+	}
+	.modal {
+		@apply bg-black/[0.6] fixed top-0 h-full w-full;
+	}
 }
