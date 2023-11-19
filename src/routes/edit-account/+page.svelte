@@ -39,7 +39,7 @@
 				<input id="fullName" name="fullName" type="text" value={form?.full_name ?? fullName} />
 			</div>
 
-			<div>
+			<div hidden>
 				<label for="username">Tên người dùng</label>
 				<input id="username" name="username" type="text" value={form?.username ?? username} />
 			</div>

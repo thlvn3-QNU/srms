@@ -23,6 +23,13 @@
 				<div class="  m-[20px] py-[10px] pl-[10px] text-[18px] font-medium">Quản lí sinh viên</div>
 
 				<div class=" flex justify-between ml-[20px] mt-[70px]">
+					<div class="">
+						<button
+							class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
+						>
+							Thêm sinh viên
+						</button>
+					</div>
 					<div class="mr-[24px]">
 						<button
 							class="px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px] mr-[20px]"
