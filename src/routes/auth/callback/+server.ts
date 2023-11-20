@@ -1,4 +1,4 @@
-// src/routes/auth/callback/+server.ts
+// Code xử lý auth session của supabase. Sử dụng template từ tutorial.
 import { redirect } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals: { supabase } }) => {
