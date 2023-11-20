@@ -17,6 +17,8 @@
 			<p>Số điện thoại: {'0' + profile?.phone_number || 'Chưa cập nhật'}</p>
 			<p>Email: {session.user.email}</p>
 		</div>
-		<button class="variant-filled">Sửa thông tin</button>
+		<a href="/edit-account">
+			<button class="variant-filled">Sửa thông tin</button>
+		</a>
 	</div>
 </div>
