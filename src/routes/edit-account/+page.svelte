@@ -11,8 +11,6 @@
 	let profileForm: HTMLFormElement;
 	let loading = false;
 
-	let avatarUrl: string = profile?.avatar_url ?? '';
-
 	let fullName: string = profile?.full_name ?? '';
 	let username: string = profile?.username ?? '';
 	let dateOfBirth: Date = profile?.date_of_birth ?? '';
