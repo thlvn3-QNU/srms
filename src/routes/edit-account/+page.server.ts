@@ -19,47 +19,34 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 export const actions = {
 	update: async ({ request, locals: { supabase, getSession } }) => {
 		const formData = await request.formData();
-
-		const avatar_url = formData.get('avatarUrl') as string;
-		const full_name = formData.get('fullName') as string;
-		const username = formData.get('username') as string;
-		const date_of_birth = formData.get('date_of_birth') as string;
-		const gender = formData.get('gender') as string;
-		const phone_number = formData.get('phone_number') as string;
-
 		const session = await getSession();
+
+		const fields: string[] = ['fullName', 'username', 'date_of_birth', 'gender', 'phone_number'];
+
+		const data: Record<string, string | boolean> = {};
+
+		for (const field of fields) {
+			const value = formData.get(field);
+			if (value !== null && value !== undefined) {
+				data[field] = value as string;
+			}
+		}
+
+		data.gender = data.gender === 'men';
 
 		const { error } = await supabase.from('profiles').upsert({
 			id: session?.user.id,
-			full_name,
-			username,
-            date_of_birth,
-			avatar_url,
-            gender: (gender === "men" ? true : false),
-            phone_number,
+			...data,
 			updated_at: new Date()
 		});
 
 		if (error) {
-			return fail(500, {
-				full_name,
-                username,
-                date_of_birth,
-                avatar_url,
-                gender,
-                phone_number
-			});
+			return fail(500, data);
 		}
 
-		return {
-			full_name,
-			username,
-            date_of_birth,
-			avatar_url,
-            gender,
-            phone_number
-		};
+		return data;
 	},
+	// TODO: make this globally
 	signout: async ({ locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (session) {
