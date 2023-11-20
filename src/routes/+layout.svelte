@@ -36,5 +36,7 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<slot />
+	<div class="p-6">
+		<slot />
+	</div>
 </AppShell>
