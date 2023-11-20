@@ -28,10 +28,10 @@
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">CSRM |ADMIN</strong>
+				<strong class="text-xl uppercase">CSRM</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<p />
+				<p>Người dùng</p>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
