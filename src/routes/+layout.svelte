@@ -13,7 +13,7 @@
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
 
-	let hideControls: string = "";
+	let hideControls: string = '';
 	controlVisibility(session as unknown as Boolean); // wtf?
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
@@ -75,7 +75,22 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<p>implement sidebar here.</p>
+		<nav class="list-nav [&>*>*>*]:!no-underline">
+			<ul>
+				<li><a href="/account">Thông tin cá nhân</a></li>
+				<li><a href="/edit-account">Chỉnh sửa thông tin</a></li>
+				<li><a href="/edit-account/change-password">Đổi mật khẩu</a></li>
+				<hr />
+				{#if profile?.permission > 0} 
+					<li><a href="/manage/class">Lớp học</a></li>
+					<li><a href="/manage/subject">Môn học</a></li>
+					<li><a href="/manage/student">Sinh viên</a></li>
+					<li><a href="/manage/result">Kết quả học tập</a></li>
+				{:else}
+					<li><a href="/">Kết quả học tập</a></li>
+				{/if}
+			</ul>
+		</nav>
 	</svelte:fragment>
 
 	<div class="p-6 h-full">
