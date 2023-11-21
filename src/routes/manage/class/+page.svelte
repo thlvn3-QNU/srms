@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Paginator, Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
 
 	export let data;
@@ -15,13 +16,18 @@
 	};
 
 	function entry(meta: any) {
-		console.log(meta);
+		goto(`class/details?id=${meta.detail[0]}`);
 	}
 </script>
 
 <div class="[&>*]:py-4">
-	<div class="header">
-		<button class="variant-filled">Thêm lớp học</button>
+	<div class="header flex flex-row justify-between w-full">
+		<span>
+			<button class="variant-filled">Thêm lớp học</button>
+		</span>
+		<span>
+			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled/>
+		</span>
 	</div>
 	<div class="content">
 		<Table source={tableSimple} interactive={true} on:selected={entry} />
