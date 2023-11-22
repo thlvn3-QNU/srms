@@ -18,7 +18,7 @@ export const load = async ({ fetch, data, depends }) => {
 
 	const { data: profile } = await supabase
 		.from('profiles')
-		.select(`username, permission`)
+		.select(`full_name, permission`)
 		.eq('id', session?.user.id)
 		.single();
 

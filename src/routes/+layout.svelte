@@ -50,7 +50,7 @@
 
 <div class="card p-4 variant-filled z-50" data-popup="sessionPopup">
 	<div class="arrow variant-filled" />
-	<button class="[&>*]:mx-2 hover:variant-filled-error" on:click={signOut}>
+	<button class="hover:variant-filled-error" on:click={signOut}>
 		Đăng xuất <RightFromBracketSolid size="16" />
 	</button>
 </div>
@@ -67,8 +67,8 @@
 				<strong class="text-xl uppercase">CSRM</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<button class="[&>*]:mx-2 hover:variant-ghost" use:popup={popupClick}>
-					{profile?.username}
+				<button class="hover:variant-ghost" use:popup={popupClick}>
+					{profile?.full_name}
 					<AngleDownSolid size="14" />
 				</button>
 			</svelte:fragment>
