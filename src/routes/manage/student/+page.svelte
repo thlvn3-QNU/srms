@@ -1,10 +1,6 @@
 <script lang="ts">
-	import {
-		Paginator,
-		Table,
-		tableMapperValues,
-		type TableSource
-	} from '@skeletonlabs/skeleton';
+	import { Paginator, Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { PlusSolid } from 'svelte-awesome-icons';
 
 	export let data;
 
@@ -27,7 +23,7 @@
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<button class="variant-filled">Thêm lớp học</button>
+			<h2 class="h2">Danh sách sinh viên</h2>
 		</span>
 		<span>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />

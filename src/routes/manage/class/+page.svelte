@@ -24,9 +24,10 @@
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<button class="variant-filled"><PlusSolid />Thêm lớp học</button>
+			<h2 class="h2">Danh sách lớp học</h2>
 		</span>
-		<span>
+		<span class="flex gap-4">
+			<button class="variant-filled"><PlusSolid size="16"/>Thêm</button>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled/>
 		</span>
 	</div>
