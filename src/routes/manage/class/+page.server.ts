@@ -8,9 +8,13 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 		throw redirect(303, '/');
 	}
 
+    // FIXME: unable to reference foreign key
+    // subject_id.name returned null
     const { data: classes } = await supabase
         .from('class')
-        .select(`id, subject_id, teacher_id, class_name`);
+        .select('id, subject_id(name), ...teacher_id(full_name), class_name');
+
+    console.log(classes);
 
     return { session, classes };
 };

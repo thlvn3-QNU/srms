@@ -12,7 +12,7 @@
 
 	const tableSimple: TableSource = {
 		head: ['Khoa/Môn học', 'Giáo viên', 'Lớp'],
-		body: tableMapperValues(classTable, ['subject_id', 'teacher_id', 'class_name']),
+		body: tableMapperValues(classTable, ['subject_id', 'full_name', 'class_name']),
 		meta: tableMapperValues(classTable, ['id', 'subject_id', 'teacher_id', 'class_name'])
 	};
 
