@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Paginator, Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
-	import { PlusSolid } from 'svelte-awesome-icons';
+	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
 
 	export let data;
 
