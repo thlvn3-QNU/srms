@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Paginator, Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { PlusSolid } from 'svelte-awesome-icons';
 
 	export let data;
 
@@ -23,7 +24,7 @@
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<button class="variant-filled">Thêm lớp học</button>
+			<button class="variant-filled"><PlusSolid />Thêm lớp học</button>
 		</span>
 		<span>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled/>
@@ -31,9 +32,5 @@
 	</div>
 	<div class="content">
 		<Table source={tableSimple} interactive={true} on:selected={entry} />
-	</div>
-	<div class="footer">
-		<span>Hiển thị: </span>
-		<Paginator />
 	</div>
 </div>
