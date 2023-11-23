@@ -26,14 +26,14 @@
 	};
 </script>
 
-<div class="flex flex-col justify-center items-center align-middle h-full">
-	<h2 class="h2 text-center">Chỉnh sửa tiểu sử</h2>
+<div class="flex flex-col h-full">
+	<h2 class="h2">Chỉnh sửa tiểu sử</h2>
 	<br />
-	<div class="w-9/12 lg:w-1/3 [&>*]:space-y-6">
+	<div class="[&>*]:space-y-6">
 		<form method="post" action="?/update" use:enhance={handleSubmit} bind:this={profileForm}>
 			<div>
 				<label for="fullName">Tên đầy đủ</label>
-				<input id="fullName" name="fullName" type="text" value={form?.full_name ?? fullName} />
+				<input id="fullName" name="full_name" type="text" value={form?.full_name ?? fullName} />
 			</div>
 
 			<div>

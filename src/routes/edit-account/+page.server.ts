@@ -21,7 +21,7 @@ export const actions = {
 		const formData = await request.formData();
 		const session = await getSession();
 
-		const fields: string[] = ['fullName', 'date_of_birth', 'gender', 'phone_number'];
+		const fields: string[] = ['full_name', 'date_of_birth', 'gender', 'phone_number'];
 
 		const data: Record<string, string | boolean> = {};
 
@@ -41,6 +41,7 @@ export const actions = {
 		});
 
 		if (error) {
+			console.log(error);
 			return fail(500, data);
 		}
 
