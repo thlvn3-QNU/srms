@@ -2,11 +2,13 @@
 	import '../app.postcss';
 	import { onMount } from 'svelte';
 	import { redirect } from '@sveltejs/kit';
-	import { storePopup } from '@skeletonlabs/skeleton';
-	import { invalidate, goto, invalidateAll } from '$app/navigation';
+	import { invalidate, goto } from '$app/navigation';
+	import { Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
+
+	initializeStores();
 
 	export let data;
 
@@ -48,12 +50,7 @@
 	}
 </script>
 
-<div class="card p-4 variant-filled z-50" data-popup="sessionPopup">
-	<div class="arrow variant-filled" />
-	<button class="hover:variant-filled-error" on:click={signOut}>
-		Đăng xuất <RightFromBracketSolid size="16" />
-	</button>
-</div>
+<Toast />
 
 <AppShell
 	scrollbarGutter="auto"
@@ -81,7 +78,7 @@
 				<li><a href="/edit-account">Chỉnh sửa thông tin</a></li>
 				<li><a href="/edit-account/change-password">Đổi mật khẩu</a></li>
 				<hr />
-				{#if profile?.permission > 0} 
+				{#if profile?.permission > 0}
 					<li><a href="/manage/class">Lớp học</a></li>
 					<li><a href="/manage/subject">Môn học</a></li>
 					<li><a href="/manage/student">Sinh viên</a></li>
@@ -97,3 +94,10 @@
 		<slot />
 	</div>
 </AppShell>
+
+<div class="card p-4 variant-filled z-50" data-popup="sessionPopup">
+	<div class="arrow variant-filled" />
+	<button class="hover:variant-filled-error" on:click={signOut}>
+		Đăng xuất <RightFromBracketSolid size="16" />
+	</button>
+</div>
