@@ -12,7 +12,6 @@
 	let loading = false;
 
 	let fullName: string = profile?.full_name ?? '';
-	let username: string = profile?.username ?? '';
 	let dateOfBirth: Date = profile?.date_of_birth ?? '';
 	let phoneNumber: number = profile?.phone_number ?? '';
 	let gender: boolean = profile?.gender ?? '';
@@ -35,11 +34,6 @@
 			<div>
 				<label for="fullName">Tên đầy đủ</label>
 				<input id="fullName" name="fullName" type="text" value={form?.full_name ?? fullName} />
-			</div>
-
-			<div hidden>
-				<label for="username">Tên người dùng</label>
-				<input id="username" name="username" type="text" value={form?.username ?? username} />
 			</div>
 
 			<div>

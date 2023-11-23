@@ -9,7 +9,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 
 	const { data: profile } = await supabase
 		.from('profiles')
-		.select(`username, full_name, date_of_birth, gender, address, phone_number`)
+		.select(`full_name, date_of_birth, gender, address, phone_number`)
 		.eq('id', session.user.id)
 		.single();
 
@@ -21,7 +21,7 @@ export const actions = {
 		const formData = await request.formData();
 		const session = await getSession();
 
-		const fields: string[] = ['fullName', 'username', 'date_of_birth', 'gender', 'phone_number'];
+		const fields: string[] = ['fullName', 'date_of_birth', 'gender', 'phone_number'];
 
 		const data: Record<string, string | boolean> = {};
 
