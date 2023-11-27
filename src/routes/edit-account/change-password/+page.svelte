@@ -1,33 +1,34 @@
-<main>
-	<div class="">
-		<div class="flex">
-			<div class="" />
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types';
+	import { getToastStore, type ToastSettings, type ToastStore } from '@skeletonlabs/skeleton';
 
-			<div class="flex-1">
-				<div class="  m-[20px] py-[10px] pl-[10px] text-[18px] font-medium">Đổi mật khẩu</div>
-				<div class="  m-[20px] p-[10px] text-[16px] w-[810px]">
-					<div class="mb-[20px] flex">
-						<label class=""> Mật khẩu cũ </label>
-						<input type="text" class="edit-input" />
-					</div>
-					<div class="mb-[20px] flex">
-						<label class=""> Mật khẩu mới </label>
-						<input type="text" class="edit-input" />
-					</div>
-					<div class="mb-[20px] flex">
-						<label>Nhập lại mật khẩu</label>
-						<input type="text" class="edit-input" />
-					</div>
-				</div>
+	export let form: ActionData;
+	let loading = false;
 
-				<div class="text-center ml-[316px] my-[30px]">
-					<button
-						class="px-[20px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-					>
-						Cập nhật
-					</button>
-				</div>
-			</div>
+	const handleSubmit = () => {
+		loading = true;
+		return async () => {
+			loading = false;
+		};
+	};
+</script>
+
+<div class="[&>*]:space-y-6">
+	<h2 class="h2">Đổi mật khẩu</h2>
+	<br />
+	<form method="post" action="?/update" use:enhance={handleSubmit}>
+		<div>
+			<label for="new">Mật khẩu mới</label>
+			<input type="password" name="new-password" id="new" required />
 		</div>
-	</div>
-</main>
+		<div>
+			<label for="confirm">Nhập lại mật khẩu mới</label>
+			<input type="password" name="confirm-password" id="confirm" required />
+		</div>
+		<div>
+			<input type="submit" value="Cập nhật mật khẩu" disabled={loading} />
+		</div>
+		{#if form?.error}<p class="red">{form?.message}</p>{/if}
+	</form>
+</div>
