@@ -1,151 +1,34 @@
-<script>
-	import {
-		ArrowDownAZSolid,
-		FileLinesRegular,
-		PenToSquareRegular,
-		TrashCanRegular,
-		AngleLeftSolid,
-		AngleRightSolid
-	} from 'svelte-awesome-icons';
+<script lang="ts">
+	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { PlusSolid } from 'svelte-awesome-icons';
 
-	let MenuDelete = false;
-	let showMenuDelete = () => {
-		MenuDelete = !MenuDelete;
+	export let data;
+
+	let { supabase, session, subject } = data;
+	$: ({ supabase, session, subject } = data);
+
+	let scoreTable: any[] = subject as any[];
+
+	const displayTable: TableSource = {
+		head: ['ID', 'Môn học', 'Tín chỉ'],
+		body: tableMapperValues(scoreTable, ['id', 'name', 'credits']),
+		meta: tableMapperValues(scoreTable, ['id'])
 	};
+
+	function entrySelect(meta: any) {}
 </script>
 
-<main>
-	<div class="">
-		<div class="flex">
-			<div class="" />
-
-			<div class="flex-1">
-				<div class="  m-[20px] py-[10px] pl-[10px] text-[18px] font-medium">Quản lí môn học</div>
-
-				<div class=" flex justify-between ml-[20px] mt-[70px]">
-					<div class="">
-						<button
-							class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-						>
-							Thêm môn học
-						</button>
-					</div>
-					<div class="mr-[24px]">
-						<button
-							class="px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px] mr-[20px]"
-						>
-							Tìm kiếm
-						</button>
-
-						<input type="text" class="border shadow py-1 px-2 outline-none" />
-					</div>
-				</div>
-
-				<div class=" m-[20px] flex">
-					<table>
-						<thead class="">
-							<tr class="">
-								<th class="w-[100px] py-1 px-2">
-									<div class="float-left">STT</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[200px] py-1 px-2">
-									<div class="float-left">Mã môn học</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[290px] py-1 px-2">
-									<div class="float-left">Tên môn học</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[290px] py-1 px-2">
-									<div class="float-left">Số tín chỉ</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-							</tr>
-						</thead>
-						<tbody class="">
-							<tr class="">
-								<td>1</td>
-								<td>243423423</td>
-								<td>Nhập môn công nghệ phần mềm</td>
-								<td>3</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-
-				<div class="flex justify-between ml-[20px] mt-[70px]">
-					<div class=" flex justify-between w-[120px]">
-						<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-						<div class="p-[6px] text-[20px] font-semibold">/</div>
-
-						<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-					</div>
-					<div class="mr-[24px] flex">
-						<div class="class mr-[30px]">
-							<button
-								class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-							>
-								<div class="pt-1 mr-[5px]"><AngleLeftSolid size={'18px'} /></div>
-								Trước
-							</button>
-						</div>
-
-						<div class="class">
-							<button
-								class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-							>
-								Sau
-								<div class="pt-1 mr-[5px]"><AngleRightSolid size={'18px'} /></div>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+<div class="[&>*]:py-4">
+	<div class="header flex flex-row justify-between w-full">
+		<span>
+			<h2 class="h2">Môn học</h2>
+		</span>
+		<span class="flex gap-4">
+			<button class="variant-filled"><PlusSolid size="16"/>Thêm</button>
+			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
+		</span>
 	</div>
-	{#if MenuDelete}
-		<div class="fixed inset-0 z-10 overflow-y-auto">
-			<div
-				class="fixed inset-0 w-full h-full bg-black opacity-40"
-				on:click={() => (MenuDelete = !MenuDelete)}
-			/>
-			<div class="flex items-center min-h-screen px-4 py-8">
-				<div class="relative w-full max-w-lg p-4 mx-auto bg-white rounded-md shadow-lg h-[200px]">
-					<div class="mt-3 sm:flex">
-						<div class=" flex">
-							<h4 class="  text-lg font-medium text-gray-800 ml-[20px] mt-[10px]">
-								Bạn có chắc chắn muốn xóa ?
-							</h4>
-						</div>
-
-						<div class="mt-2 text-center sm:ml-4 sm:text-left absolute bottom-2 right-3">
-							<div class="items-center mt-3 font-bold">
-								<button
-									class="w-[150px] mt-2 p-2.5 flex-1 text-gray-800 rounded-md outline-none border ring-offset-2 ring-indigo-600 focus:ring-2 mr-5"
-									on:click={showMenuDelete}
-								>
-									Hủy
-								</button>
-								<button
-									class="w-[150px] mt-2 p-2.5 flex-1 text-white bg-red-600 rounded-md outline-none ring-offset-2 ring-red-600 focus:ring-2"
-									on:click={showMenuDelete}
-								>
-									Xóa
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	{/if}
-</main>
+	<div class="content">
+		<Table source={displayTable} interactive={true} on:selected={entrySelect} />
+	</div>
+</div>
