@@ -13,7 +13,5 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 		.from('score')
 		.select(`id, ...student_id(student_id, full_name), ...class_id(class_name), ...subject_id(name), total`);
 
-	console.log(score);
-
 	return { session, score };
 };
