@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
     // subject_id.name returned null
     const { data: classes } = await supabase
         .from('class')
-        .select('id, subject_id(name), ...teacher_id(full_name), class_name');
+        .select('id, ...subject_id(name), ...teacher_id(full_name)');
 
     console.log(classes);
 

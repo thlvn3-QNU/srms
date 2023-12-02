@@ -11,9 +11,9 @@
 	let classTable: any[] = classes as any[];
 
 	const tableSimple: TableSource = {
-		head: ['Khoa/Môn học', 'Giáo viên', 'Lớp'],
-		body: tableMapperValues(classTable, ['subject_id', 'full_name', 'class_name']),
-		meta: tableMapperValues(classTable, ['id', 'subject_id', 'teacher_id', 'class_name'])
+		head: ['Môn học', 'Giáo viên'],
+		body: tableMapperValues(classTable, ['name', 'full_name']),
+		meta: tableMapperValues(classTable, ['id'])
 	};
 
 	function entry(meta: any) {
