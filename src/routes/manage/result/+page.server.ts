@@ -11,7 +11,9 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
     // TODO: Populate values from their respective foreign tables
 	const { data: score } = await supabase
 		.from('score')
-		.select(`id, student_id, class_id, subject_id, total`);
+		.select(`id, ...student_id(student_id, full_name), ...class_id(class_name), subject_id, total`);
+
+	console.log(score);
 
 	return { session, score };
 };

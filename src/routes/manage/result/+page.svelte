@@ -9,8 +9,8 @@
 	let scoreTable: any[] = score as any[];
 
 	const displayTable: TableSource = {
-		head: ['MSSV', 'Lớp', 'Môn', 'Điểm'],
-		body: tableMapperValues(scoreTable, ['student_id', 'class_id', 'subject_id', 'total']),
+		head: ['MSSV', 'Họ tên', 'Lớp', 'Môn', 'Điểm'],
+		body: tableMapperValues(scoreTable, ['student_id', 'full_name', 'class_name', 'subject_id', 'total']),
 		meta: tableMapperValues(scoreTable, ['id'])
 	};
 
