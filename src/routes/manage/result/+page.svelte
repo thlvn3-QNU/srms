@@ -10,7 +10,7 @@
 
 	const displayTable: TableSource = {
 		head: ['MSSV', 'Họ tên', 'Lớp', 'Môn', 'Điểm'],
-		body: tableMapperValues(scoreTable, ['student_id', 'full_name', 'class_name', 'subject_id', 'total']),
+		body: tableMapperValues(scoreTable, ['student_id', 'full_name', 'class_name', 'name', 'total']),
 		meta: tableMapperValues(scoreTable, ['id'])
 	};
 
