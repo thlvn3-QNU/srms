@@ -14,7 +14,5 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
         .from('class')
         .select('id, ...subject_id(name), ...teacher_id(full_name)');
 
-    console.log(classes);
-
     return { session, classes };
 };
