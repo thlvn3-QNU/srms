@@ -16,5 +16,11 @@ export const load = async ({ fetch, data, depends }) => {
 		data: { session }
 	} = await supabase.auth.getSession();
 
-	return { supabase, session };
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select(`full_name, permission`)
+		.eq('id', session?.user.id)
+		.single();
+
+	return { supabase, session, profile };
 };
