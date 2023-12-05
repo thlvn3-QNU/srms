@@ -10,7 +10,7 @@
 
 <div class="flex bg-[url('$lib/qnu.jpg')] bg-cover h-full rounded-xl">
 	<div
-		class="flex flex-col justify-center items-center align-middle backdrop-blur w-1/3 rounded-xl"
+		class="flex flex-col justify-center items-center align-middle bg-slate-800/80 backdrop-blur w-1/3 rounded-tl-xl rounded-bl-xl"
 	>
 		<img src="$lib/logo.jpg" alt="QNU Logo" class="w-32" />
 		<br />
