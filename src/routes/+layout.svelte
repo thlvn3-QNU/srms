@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { redirect } from '@sveltejs/kit';
 	import { invalidate, goto } from '$app/navigation';
-	import { Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
+	import { Modal, Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
@@ -51,6 +51,7 @@
 </script>
 
 <Toast />
+<Modal />
 
 <AppShell
 	scrollbarGutter="auto"
