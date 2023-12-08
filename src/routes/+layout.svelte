@@ -61,11 +61,14 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<!-- TODO: set text to page title-->
-				<strong class="text-xl uppercase">CSRM</strong>
+				<strong class="text-xl">CSRM</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="hover:variant-ghost" use:popup={popupClick}>
-					{profile?.full_name}
+					{#if profile?.full_name} {profile?.full_name}
+					{:else if session?.user.email} {session?.user.email}
+					{/if}
+
 					<AngleDownSolid size="14" />
 				</button>
 			</svelte:fragment>
@@ -84,7 +87,7 @@
 					<li><a href="/manage/student">Sinh viên</a></li>
 					<li><a href="/manage/result">Kết quả học tập</a></li>
 				{:else}
-					<li><a href="/">Kết quả học tập</a></li>
+					<li><a href="/result">Kết quả học tập</a></li>
 				{/if}
 			</ul>
 		</nav>

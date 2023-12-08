@@ -13,7 +13,14 @@
 
 	let fullName: string = profile?.full_name ?? '';
 	let dateOfBirth: Date = profile?.date_of_birth ?? '';
-	let phoneNumber: number = profile?.phone_number ?? '';
+
+	// Someone prefers 'phone_number' as numbers. Fuck that guy.
+	let phoneNumber: string;
+	if (profile?.phone_number)
+	{
+		phoneNumber = "0" + profile?.phone_number;
+	}
+	// let phoneNumber: number = + profile?.phone_number ?? '';
 	let gender: boolean = profile?.gender ?? '';
 
 	console.log(gender);
@@ -42,7 +49,7 @@
 					id="dob"
 					name="date_of_birth"
 					type="date"
-					value={form?.date_of_birth ?? dateOfBirth}
+					value={dateOfBirth}
 				/>
 			</div>
 
@@ -52,7 +59,7 @@
 					id="phone"
 					name="phone_number"
 					type="tel"
-					value={form?.phone_number ?? phoneNumber}
+					value={phoneNumber}
 				/>
 			</div>
 

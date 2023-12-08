@@ -10,11 +10,11 @@
 		<h2 class="h2">Tiểu sử</h2>
 		<!-- TODO: turn this into a table -->
 		<div>
-			<p>Họ tên: {profile?.full_name}</p>
-			<p>Ngày sinh: {profile?.date_of_birth}</p>
+			<p>Họ tên: {profile?.full_name ?? ""}</p>
+			<p>Ngày sinh: {profile?.date_of_birth ?? ""}</p>
 			<p>Nơi sinh: Chưa cập nhật</p>
 			<p>Giới tính: {profile?.gender ? 'Nam' : 'Nữ'}</p>
-			<p>Số điện thoại: {'0' + profile?.phone_number || 'Chưa cập nhật'}</p>
+			<p>Số điện thoại: {profile?.phone_number ? '0' + profile?.phone_number : ""}</p>
 			<p>Email: {session.user.email}</p>
 		</div>
 		<a href="/edit-account">
