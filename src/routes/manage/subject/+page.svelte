@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import type { ModalSettings, TableSource } from '@skeletonlabs/skeleton';
+	import { Table, tableMapperValues, getModalStore } from '@skeletonlabs/skeleton';
 	import { PlusSolid } from 'svelte-awesome-icons';
+	import DataModify from './DataModify.svelte';
 
+	const modalStore = getModalStore();
 	export let data;
 
 	let { supabase, session, subject } = data;
@@ -14,8 +17,17 @@
 		body: tableMapperValues(scoreTable, ['id', 'name', 'credits']),
 		meta: tableMapperValues(scoreTable, ['id'])
 	};
+	
+	const modal: ModalSettings = {
+		type: 'component',
+		component: { ref: DataModify }
+	};
 
-	function entrySelect(meta: any) {}
+	function entrySelect(meta: any) {
+		console.log(meta.detail[0]);
+		modal.meta = { id: meta.detail[0] };
+		modalStore.trigger(modal);
+	}
 </script>
 
 <div class="[&>*]:py-4">
@@ -24,7 +36,7 @@
 			<h2 class="h2">Môn học</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled"><PlusSolid size="16"/>Thêm</button>
+			<button class="variant-filled"><PlusSolid size="16" />Thêm</button>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
 		</span>
 	</div>
