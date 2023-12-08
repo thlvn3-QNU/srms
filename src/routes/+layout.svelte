@@ -60,6 +60,7 @@
 </script>
 
 <Toast />
+<Modal />
 
 <Modal components={modalRegistry}/>
 
