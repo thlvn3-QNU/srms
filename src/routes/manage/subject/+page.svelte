@@ -33,6 +33,7 @@
 
 	function addNew() {
 		modal.meta.id = -1;
+		modal.meta.data = {};
 		modalStore.trigger(modal);
 	}
 </script>
