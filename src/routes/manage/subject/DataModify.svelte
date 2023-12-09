@@ -23,14 +23,14 @@
         <form action="{submitAction}" class="[&>*]:py-2">
             <div>
                 <label for="subject">Tên môn học</label>
-                <input type="text" id="subject" name="subject" value="{subjectData?.name}">
+                <input type="text" id="subject" name="subject" value="{subjectData?.name || ""}">
             </div>
             <div>
                 <label for="credits">Tín chỉ</label>
-                <input type="text" id="credits" name="credits" value="{subjectData?.credits}">
+                <input type="number" id="credits" name="credits" value="{subjectData?.credits || 0}">
             </div>
             <div>
-                <input type="submit" value="Lưu thông tin" class="w-min">
+                <input type="submit" value="Lưu thông tin" class="w-min variant-filled">
                 <button class="variant-filled-error" on:click={modalStore.close}>Huỷ bỏ</button>
             </div>
         </form>
