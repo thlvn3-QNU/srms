@@ -20,12 +20,19 @@
 	
 	const modal: ModalSettings = {
 		type: 'component',
-		component: { ref: DataModify }
+		component: { ref: DataModify },
+		meta: { supabase: supabase, id: 0 }
 	};
 
-	function entrySelect(meta: any) {
-		console.log(meta.detail[0]);
-		modal.meta = { id: meta.detail[0] };
+	async function entrySelect(meta: any) {
+        const { data: subjectData } = await supabase.from('subject').select('name, credits').eq('id', meta.detail[0]).single();
+		modal.meta.id = meta.detail[0];
+		modal.meta.data = subjectData
+		modalStore.trigger(modal);
+	}
+
+	function addNew() {
+		modal.meta.id = -1;
 		modalStore.trigger(modal);
 	}
 </script>
@@ -36,7 +43,7 @@
 			<h2 class="h2">Môn học</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled"><PlusSolid size="16" />Thêm</button>
+			<button class="variant-filled" on:click={addNew}><PlusSolid size="16" />Thêm</button>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
 		</span>
 	</div>
