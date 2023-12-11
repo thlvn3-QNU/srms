@@ -53,4 +53,11 @@ export const actions = {
 		.from('profiles')
 		.upsert(profile);
     },
+
+	delete: async ({ locals: { supabase }, request }) => {
+		const formData = await request.formData();
+		const ID: any = formData.get('id');
+
+		const { data, error } = await supabase.auth.admin.deleteUser(ID);
+	}
 } satisfies Actions;
