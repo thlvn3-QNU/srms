@@ -43,7 +43,13 @@
 					class_name:    studentTable[index].class_name,
 				},
 			};
-		};
+		}
+		else {
+			UpcomingMeta = {
+				type: DELETE_STUDENT_MODAL,
+				data: { id: studentTable[index].id }
+			}
+		}
 
 		let DataModal: ModalSettings = {
 			type: 'component',
@@ -85,18 +91,21 @@
 						<td>{i + 1}</td>
 						
 						<!-- Don't blame me -->
-						<td>{studentRow?.student_id}</td>
-						<td>{studentRow?.full_name}</td>
-						<td>{studentRow?.date_of_birth}</td>
+						<td>{studentRow?.student_id ?? 'Trống'}</td>
+						<td>{studentRow?.full_name ?? 'Trống'}</td>
+						<td>{studentRow?.date_of_birth ?? 'Trống'}</td>
 						<td>{studentRow?.gender ? 'Nữ' : 'Nam'}</td>
-						<td>{studentRow?.address}</td>
-						<td>{studentRow?.phone_number}</td>
-						<td>{studentRow?.school_year}</td>
-						<td>{studentRow?.class_name}</td>
+						<td>{studentRow?.address ?? 'Trống'}</td>
+						<td>{studentRow?.phone_number ?? 'Trống'}</td>
+						<td>{studentRow?.school_year ?? 'Trống'}</td>
+						<td>{studentRow?.class_name ?? 'Trống'}</td>
 
 						<td>
 							<button type="button" class="hover:variant-filled-error bg-green-500"
 							 		on:click={() => openModal(EDIT_STUDENT_MODAL, i)}>Sửa</button>
+
+							<button type="button" class="hover:variant-filled-error bg-red-500"
+									on:click={() => openModal(DELETE_STUDENT_MODAL, i)}>Xoá</button>
 						</td>
 					</tr>
 				{/each}

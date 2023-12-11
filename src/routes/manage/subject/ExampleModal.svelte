@@ -33,7 +33,11 @@
     }
     else if (type === ADD_STUDENT_MODAL) {
         modalTitle = "Thêm thông tin";
-        labels = ['MSV, Họ tên, Ngày sinh, Giới tính, Địa chỉ, Số điện thoại, Lớp, Khoá, Email, Mật khẩu'];
+        labels = ['MSV', 'Họ tên', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoá', 'Lớp', 'Email', 'Mật khẩu'];
+    }
+    else {
+        modalTitle = "Xoá thông tin";
+        labels = ['Bạn có chắc chắn xoá toàn bộ thông tin cũng như tài khoản của sinh viên này?'];
     }
 
     const cBase = 'card p-4 w-modal shadow-xl space-y-4';
@@ -46,7 +50,16 @@
 	<div class="{cBase}">
 		<header class={cHeader}>{modalTitle}</header>
 		<article></article>
-
+        {#if type === DELETE_STUDENT_MODAL}
+        <form class="{cForm}" method="POST" action="/">
+            <label>{labels[0]}</label>
+            <input type="text" name="id" value={studentData[8]} hidden />
+            <div class="{parent.regionFooter}">
+                <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
+                <button class="btn {parent.buttonPositive}" formaction="?/delete">Xoá</button>
+            </div>
+        </form>
+        {:else}
 		<form class="{cForm}" method="POST" action="/">
             {#each labels as label, i}
                 <label class="label">
@@ -72,11 +85,12 @@
             <input name="id" class="input" type="text"
                 value={studentData[8]} hidden/>
 
-            <div class="modal-footer {parent.regionFooter}">
+            <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
                 <button class="btn {parent.buttonPositive}" formaction="?/update">Lưu</button>
             </div>
 		</form>
+        {/if}
 		<!-- prettier-ignore -->
 	</div>
 {/if}
