@@ -3,12 +3,21 @@
 	import { onMount } from 'svelte';
 	import { redirect } from '@sveltejs/kit';
 	import { invalidate, goto } from '$app/navigation';
-	import { Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
+	import { Toast, initializeStores, getModalStore, storePopup, type ModalComponent, Modal } from '@skeletonlabs/skeleton';
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-
+	import ModalOne from './manage/subject/ExampleModal.svelte';
+			
 	initializeStores();
+
+	const modalStore = getModalStore();
+
+	const modalRegistry: Record<string, ModalComponent> = {
+		// Set a unique modal ID, then pass the component reference
+		modalComponent: { ref: ModalOne }
+	};
+						
 
 	export let data;
 
@@ -51,6 +60,8 @@
 </script>
 
 <Toast />
+
+<Modal components={modalRegistry}/>
 
 <AppShell
 	scrollbarGutter="auto"
