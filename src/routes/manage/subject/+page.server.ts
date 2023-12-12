@@ -17,12 +17,13 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 export const actions = {
 	create: async ({ request, locals: { supabase, getSession } }) => {
 		const data = await request.formData();
-		const name = await data.get("subject");
-		const credits = await data.get("credits");
+		const name = await data.get('subject');
+		const credits = await data.get('credits');
 
 		let subject = {
-			name, credits
-		}
+			name,
+			credits
+		};
 
 		const { error } = await supabase.from('subject').insert({
 			...subject,
@@ -31,20 +32,22 @@ export const actions = {
 
 		if (error) {
 			console.log(error);
-			return fail(500, subject);
+			return fail(500, { subject, error: true });
 		}
-
+		
 		return subject;
 	},
 	update: async ({ request, locals: { supabase, getSession } }) => {
 		const data = await request.formData();
-		const id = await data.get("id");
-		const name = await data.get("subject");
-		const credits = await data.get("credits");
+		const id = await data.get('id');
+		const name = await data.get('subject');
+		const credits = await data.get('credits');
 
 		const subject = {
-			id, name, credits
-		}
+			id,
+			name,
+			credits
+		};
 
 		const { error } = await supabase.from('subject').upsert({
 			...subject,
@@ -53,12 +56,12 @@ export const actions = {
 
 		if (error) {
 			console.log(error);
-			return fail(500, subject);
+			return fail(500, { subject, error: true });
 		}
 
 		return subject;
 	}
-}
+};
 
 async function getData(supabase: SupabaseClient) {
 	const { data: subject } = await supabase
