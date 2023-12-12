@@ -50,7 +50,7 @@
 	}
 </script>
 
-<Toast />
+<Toast position="t"/>
 <Modal />
 
 <AppShell
