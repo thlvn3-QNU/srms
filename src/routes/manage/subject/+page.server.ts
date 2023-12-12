@@ -34,7 +34,7 @@ export const actions = {
 
 		if (error) {
 			console.log(error);
-			return fail(500, { subject, error: true });
+			return fail(400, { subject, error: true });
 		}
 		
 		return subject;
@@ -58,7 +58,7 @@ export const actions = {
 
 		if (error) {
 			console.log(error);
-			return fail(500, { subject, error: true });
+			return fail(400, { subject, error: true });
 		}
 
 		return subject;

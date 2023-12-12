@@ -3,9 +3,10 @@
 	import { Table, tableMapperValues, getModalStore } from '@skeletonlabs/skeleton';
 	import { PlusSolid } from 'svelte-awesome-icons';
 	import DataModify from './DataModify.svelte';
+	import type { PageData } from './$types';
 
 	const modalStore = getModalStore();
-	export let data;
+	export let data: PageData;
 
 	let { supabase, session, subject } = data;
 	$: ({ supabase, session, subject } = data);
@@ -18,18 +19,22 @@
 		head: ['ID', 'Môn học', 'Tín chỉ'],
 		body: tableMapperValues(scoreTable, ['id', 'name', 'credits']),
 		meta: tableMapperValues(scoreTable, ['id'])
-	}
-	
+	};
+
 	const modal: ModalSettings = {
 		type: 'component',
 		component: { ref: DataModify },
-		meta: { supabase: supabase, id: 0 }
+		meta: { supabase, id: 0 }
 	};
 
 	async function entrySelect(meta: any) {
-        const { data: subjectData } = await supabase.from('subject').select('name, credits').eq('id', meta.detail[0]).single();
+		const { data: subjectData } = await supabase
+			.from('subject')
+			.select('name, credits')
+			.eq('id', meta.detail[0])
+			.single();
 		modal.meta.id = meta.detail[0];
-		modal.meta.data = subjectData
+		modal.meta.data = subjectData;
 		modalStore.trigger(modal);
 	}
 
