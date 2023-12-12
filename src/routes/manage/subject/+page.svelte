@@ -12,6 +12,7 @@
 
 	let scoreTable: any[] = subject as any[];
 
+	// TODO: Reload table
 	const displayTable: TableSource = {
 		head: ['ID', 'Môn học', 'Tín chỉ'],
 		body: tableMapperValues(scoreTable, ['id', 'name', 'credits']),
