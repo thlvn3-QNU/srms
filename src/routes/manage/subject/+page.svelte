@@ -11,13 +11,14 @@
 	$: ({ supabase, session, subject } = data);
 
 	let scoreTable: any[] = subject as any[];
+	$: scoreTable = subject as any[];
 
-	// TODO: Reload table
-	const displayTable: TableSource = {
+	let displayTable: TableSource;
+	$: displayTable = {
 		head: ['ID', 'Môn học', 'Tín chỉ'],
 		body: tableMapperValues(scoreTable, ['id', 'name', 'credits']),
 		meta: tableMapperValues(scoreTable, ['id'])
-	};
+	}
 	
 	const modal: ModalSettings = {
 		type: 'component',

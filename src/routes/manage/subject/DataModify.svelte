@@ -36,7 +36,7 @@
 					background: 'variant-filled-secondary',
 					hideDismiss: true
 				});
-                invalidate("/manage/subject");
+                invalidate("subject:reload");
 				modalStore.close();
 			}
 		};
