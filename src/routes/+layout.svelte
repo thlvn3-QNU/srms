@@ -59,7 +59,7 @@
 	}
 </script>
 
-<Toast />
+<Toast position="t"/>
 <Modal />
 
 <Modal components={modalRegistry}/>
