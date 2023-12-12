@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
 	import { getModalStore } from "@skeletonlabs/skeleton";
 	import type { SupabaseClient } from "@supabase/supabase-js";
 	import type { SvelteComponent } from "svelte";
@@ -8,10 +9,20 @@
 	const modalStore = getModalStore();
 
     const subjectId = $modalStore[0].meta.id
-    const submitAction = subjectId > 0 ? '?/update-subject' : '?/create-subject';
+    const submitAction = subjectId > 0 ? '?/update' : '?/create';
     const subjectData = $modalStore[0].meta.data;
 
     const supabase: SupabaseClient = $modalStore[0].meta.supabase;
+
+    let disabled = false;
+
+    function formEnhance() {
+        disabled = true;
+        return async () => {
+			disabled = false;
+            modalStore.close();
+		};
+    }
 </script>
 
 {#if $modalStore[0]}
@@ -20,18 +31,19 @@
         {#if subjectId !== -1}
             <p>ID: {subjectId}</p>
         {/if}
-        <form action="{submitAction}" class="[&>*]:py-2">
+        <form method="POST" action="{submitAction}" class="[&>*]:py-2" use:enhance={formEnhance}>
+            <input type="hidden" name="id" value="{subjectId}">
             <div>
                 <label for="subject">Tên môn học</label>
-                <input type="text" id="subject" name="subject" value="{subjectData?.name || ""}">
+                <input type="text" id="subject" name="subject" value="{subjectData?.name || ""}" {disabled}>
             </div>
             <div>
                 <label for="credits">Tín chỉ</label>
-                <input type="number" id="credits" name="credits" value="{subjectData?.credits || 0}">
+                <input type="number" id="credits" name="credits" value="{subjectData?.credits || 0}" {disabled}>
             </div>
             <div>
-                <input type="submit" value="Lưu thông tin" class="w-min variant-filled">
-                <button class="variant-filled-error" on:click={modalStore.close}>Huỷ bỏ</button>
+                <input type="submit" value="Lưu thông tin" class="w-min variant-filled" {disabled}>
+                <button class="variant-filled-error" on:click={modalStore.close} {disabled}>Huỷ bỏ</button>
             </div>
         </form>
     </div>
