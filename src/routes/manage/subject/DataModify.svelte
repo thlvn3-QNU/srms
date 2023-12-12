@@ -16,7 +16,10 @@
 	const subjectData = $modalStore[0].meta.data;
 
 	const supabase: SupabaseClient = $modalStore[0].meta.supabase;
+	
+	// FIXME: form is null.
 	export let form: ActionData;
+	$: console.log(form);
 
 	let disabled = false;
 
@@ -24,6 +27,7 @@
 		disabled = true;
 		return async () => {
 			disabled = false;
+			console.log(form);
 			if (form?.error) {
 				toastStore.trigger({
 					message: 'Không thể xử lý yêu cầu.',
@@ -46,7 +50,7 @@
 {#if $modalStore[0]}
 	<div class="card-modal">
 		<h3 class="h3">{subjectId > 0 ? 'Thay đổi thông tin' : 'Tạo mới'} môn học</h3>
-		{#if subjectId !== -1}
+		{#if subjectId !== -2}
 			<p>ID: {subjectId}</p>
 		{/if}
 		<form method="POST" action={submitAction} class="[&>*]:py-2" use:enhance={formEnhance}>
@@ -59,6 +63,7 @@
 					name="subject"
 					value={subjectData?.name || form?.name || ''}
 					{disabled}
+					required
 				/>
 			</div>
 			<div>
@@ -69,8 +74,10 @@
 					name="credits"
 					value={subjectData?.credits || form?.credits || 0}
 					{disabled}
+					required
 				/>
 			</div>
+			{#if form?.error}<p class="error">Không thể xử lý yêu cầu.</p>{/if}
 			<div>
 				<input type="submit" value="Lưu thông tin" class="w-min variant-filled" {disabled} />
 				<button class="variant-filled-error" on:click={modalStore.close} {disabled}>Huỷ bỏ</button>
