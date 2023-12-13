@@ -15,6 +15,7 @@
     let labels: any = [];
     let inputNames: any = [];
     let studentData: any = [];
+    let studentID: any;
     let type: any = $modalStore[0].meta.type;
     let modalTitle: any;
 
@@ -28,8 +29,8 @@
                        $modalStore[0].meta.data.phone_number,
                        $modalStore[0].meta.data.school_year,          
                        $modalStore[0].meta.data.class_name,
-                       $modalStore[0].meta.data.email ?? '',
-                       $modalStore[0].meta.data.password ?? '',
+                       '',
+                       '',
                        $modalStore[0].meta.data.id]
         labels = ['MSV', 'Họ tên', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoá', 'Lớp'];
         inputNames = ['student_id', 'full_name', 'date_of_birth', 'gender', 'address', 'phone_number', 'school_year', 'class_name'];
@@ -41,6 +42,7 @@
     }
     else {
         modalTitle = "Xoá thông tin";
+        studentID = $modalStore[0].meta.data.id;
         labels = ['Bạn có chắc chắn xoá toàn bộ thông tin cũng như tài khoản của sinh viên này?'];
     }
 
@@ -58,7 +60,7 @@
         {#if type === DELETE_STUDENT_MODAL}
         <form class="{cForm}" method="POST" action="/">
             <label class="label">{labels[0]}</label>
-            <input type="text" name="id" value={studentData[ID_INDEX]} hidden />
+            <input type="text" name="id" value={studentID} hidden />
             <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
                 <button class="btn {parent.buttonPositive}" formaction="?/delete">Xoá</button>
@@ -88,7 +90,7 @@
 
             <!-- Sorry for this workaround. No others solutions could be found. -->
             <input name="id" class="input" type="text"
-                value={studentData[ID_INDEX]} hidden/>
+                value={studentData[ID_INDEX]} hidden/> 
 
             <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
