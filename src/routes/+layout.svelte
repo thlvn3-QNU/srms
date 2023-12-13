@@ -7,8 +7,11 @@
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
+	import Drawer from '$lib/Drawer.svelte';
+	
+	// LongNhat's works - this is absolutely unhinged
 	import ModalOne from './manage/student/modal.svelte';
-			
+
 	initializeStores();
 
 	const modalStore = getModalStore();
@@ -59,7 +62,7 @@
 	}
 </script>
 
-<Toast position="t"/>
+<Toast position="t" />
 <Modal />
 
 <Modal components={modalRegistry}/>
@@ -87,22 +90,7 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<nav class="list-nav [&>*>*>*]:!no-underline">
-			<ul>
-				<li><a href="/account">Thông tin cá nhân</a></li>
-				<li><a href="/edit-account">Chỉnh sửa thông tin</a></li>
-				<li><a href="/edit-account/change-password">Đổi mật khẩu</a></li>
-				<hr />
-				{#if profile?.permission > 0}
-					<li><a href="/manage/class">Lớp học</a></li>
-					<li><a href="/manage/subject">Môn học</a></li>
-					<li><a href="/manage/student">Sinh viên</a></li>
-					<li><a href="/manage/result">Kết quả học tập</a></li>
-				{:else}
-					<li><a href="/result">Kết quả học tập</a></li>
-				{/if}
-			</ul>
-		</nav>
+		<Drawer {profile}/>
 	</svelte:fragment>
 
 	<div class="p-6 h-full">
