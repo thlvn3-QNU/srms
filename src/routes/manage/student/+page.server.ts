@@ -30,13 +30,14 @@ export const actions = {
 		if (isInserting) {
 			
 			// Yes, I did it. God dammit.
+			// I don't want to put this in +layout, as this is not what we want to do 
 			const supabaseAdmin = createClient(
 				PUBLIC_SUPABASE_URL,
 				PUBLIC_SECRET_ROLE_KEY
 			);
 
 			const userEmail = formData.get('email')?.toString();
-			const userPassword = formData.get('password')?.toString()
+			const userPassword = formData.get('password')?.toString();
 			
 			await supabaseAdmin.auth.admin.createUser({
 				email: userEmail,
@@ -83,6 +84,11 @@ export const actions = {
 		const formData = await request.formData();
 		const ID: any = formData.get('id');
 
-		const { data, error } = await supabase.auth.admin.deleteUser(ID);
+		const supabaseAdmin = createClient(
+			PUBLIC_SUPABASE_URL,
+			PUBLIC_SECRET_ROLE_KEY
+		);
+
+		let { data, error } = await supabaseAdmin.auth.admin.deleteUser(ID);
 	}
 } satisfies Actions;
