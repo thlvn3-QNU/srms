@@ -1,0 +1,16 @@
+{
+	"links": [
+		[
+			{ "label": "Thông tin cá nhân", "href": "/account", "permission": -1 },
+			{ "label": "Chỉnh sửa thông tin", "href": "/edit-account", "permission": -1 },
+			{ "label": "Đổi mật khẩu", "href": "/edit-account/change-password", "permission": -1 }
+		],
+		[
+			{ "label": "Lớp học", "href": "/manage/class", "permission": 1 },
+			{ "label": "Môn học", "href": "/manage/subject", "permission": 1 },
+			{ "label": "Sinh viên", "href": "/manage/student", "permission": 1 },
+			{ "label": "Kết quả học tập", "href": "/manage/result", "permission": 1 },
+			{ "label": "Kết quả học tập", "href": "/result", "permission": 0 }
+		]
+	]
+}
