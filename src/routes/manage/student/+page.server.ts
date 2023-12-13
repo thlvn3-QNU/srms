@@ -1,6 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { randomUUID, type UUID } from 'crypto';
+import { createClient } from '@supabase/supabase-js';
+
+import { PUBLIC_SECRET_ROLE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -22,8 +25,37 @@ export const actions = {
 		const formData = await request.formData();
 		
 		let ID: any;
-		if ( formData.get('id') === 'undefined') {
-			ID = randomUUID();
+		const isInserting: boolean = formData.get('id') === 'undefined';
+
+		if (isInserting) {
+			
+			// Yes, I did it. God dammit.
+			const supabaseAdmin = createClient(
+				PUBLIC_SUPABASE_URL,
+				PUBLIC_SECRET_ROLE_KEY
+			);
+
+			const userEmail = formData.get('email')?.toString();
+			const userPassword = formData.get('password')?.toString()
+			
+			await supabaseAdmin.auth.admin.createUser({
+				email: userEmail,
+				password: userPassword,
+				email_confirm: true
+			});
+
+			let list = (await supabaseAdmin.auth.admin.listUsers()).data.users;
+			let userID;
+			for (let row of list) {
+				if (row.email == userEmail) {
+					userID = row.id;
+					break;
+				}
+			}
+
+			ID = userID;
+
+			console.log(ID);
 		}
 		else {
 			ID = formData.get('id');
@@ -41,14 +73,7 @@ export const actions = {
 			school_year: formData.get('school_year'),
 			permission: 0
 		}
-
-		// const { data, error } = await supabase.auth.admin.createUser({
-		// 	email: 'user@email.com',
-		// 	password: 'password',
-		// 	user_metadata: { name: 'Yoda' }
-		// })
-
-
+		
 		await supabase
 		.from('profiles')
 		.upsert(profile);

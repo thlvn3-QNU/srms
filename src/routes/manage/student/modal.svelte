@@ -1,13 +1,14 @@
 <script lang="ts"> 
-    import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
-    import type { PageData, ActionData } from './$types'
 
     const modalStore = getModalStore();
 
     const ADD_STUDENT_MODAL: number    = 1,
           EDIT_STUDENT_MODAL: number   = 2,
           DELETE_STUDENT_MODAL: number = 3;
+    
+    const ID_INDEX: number = 10;
         
     export let parent: SvelteComponent;
 
@@ -25,15 +26,18 @@
                        $modalStore[0].meta.data.gender,
                        $modalStore[0].meta.data.address,
                        $modalStore[0].meta.data.phone_number,
-                       $modalStore[0].meta.data.class_name,          
-                       $modalStore[0].meta.data.school_year,
-                       $modalStore[0].meta.data.id,]
+                       $modalStore[0].meta.data.school_year,          
+                       $modalStore[0].meta.data.class_name,
+                       $modalStore[0].meta.data.email ?? '',
+                       $modalStore[0].meta.data.password ?? '',
+                       $modalStore[0].meta.data.id]
         labels = ['MSV', 'Họ tên', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoá', 'Lớp'];
         inputNames = ['student_id', 'full_name', 'date_of_birth', 'gender', 'address', 'phone_number', 'school_year', 'class_name'];
     }
     else if (type === ADD_STUDENT_MODAL) {
         modalTitle = "Thêm thông tin";
         labels = ['MSV', 'Họ tên', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoá', 'Lớp', 'Email', 'Mật khẩu'];
+        inputNames = ['student_id', 'full_name', 'date_of_birth', 'gender', 'address', 'phone_number', 'school_year', 'class_name', 'email', 'password'];
     }
     else {
         modalTitle = "Xoá thông tin";
@@ -50,15 +54,17 @@
 	<div class="{cBase}">
 		<header class={cHeader}>{modalTitle}</header>
 		<article></article>
+
         {#if type === DELETE_STUDENT_MODAL}
         <form class="{cForm}" method="POST" action="/">
-            <label>{labels[0]}</label>
-            <input type="text" name="id" value={studentData[8]} hidden />
+            <label class="label">{labels[0]}</label>
+            <input type="text" name="id" value={studentData[ID_INDEX]} hidden />
             <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
                 <button class="btn {parent.buttonPositive}" formaction="?/delete">Xoá</button>
             </div>
         </form>
+
         {:else}
 		<form class="{cForm}" method="POST" action="/">
             {#each labels as label, i}
@@ -66,10 +72,9 @@
                     <span>{label}</span>
                     {#if inputNames[i] === 'gender'}
                         <select class="select" name={inputNames[i]} 
-                        value={studentData[i] ? "1" : "0"} required>
+                            value={studentData[i] ? "1" : "0"} required>
                             <option value="0">Nam</option>
                             <option value="1">Nữ</option>
-                            
                         </select>
                     {:else if inputNames[i] === 'date_of_birth'}
                         <input class="input" type="date" name={inputNames[i]} 
@@ -83,7 +88,7 @@
 
             <!-- Sorry for this workaround. No others solutions could be found. -->
             <input name="id" class="input" type="text"
-                value={studentData[8]} hidden/>
+                value={studentData[ID_INDEX]} hidden/>
 
             <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>

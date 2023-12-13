@@ -7,7 +7,7 @@
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import ModalOne from './manage/subject/ExampleModal.svelte';
+	import ModalOne from './manage/student/modal.svelte';
 			
 	initializeStores();
 
