@@ -3,14 +3,23 @@
 	import { onMount } from 'svelte';
 	import { redirect } from '@sveltejs/kit';
 	import { invalidate, goto } from '$app/navigation';
-	import { Modal, Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
+	import { Toast, initializeStores, getModalStore, storePopup, type ModalComponent, Modal } from '@skeletonlabs/skeleton';
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	
+  
+	import ModalOne from './manage/student/modal.svelte';
 	import Drawer from '$lib/Drawer.svelte';
-
+  
 	initializeStores();
+
+	const modalStore = getModalStore();
+
+	const modalRegistry: Record<string, ModalComponent> = {
+		// Set a unique modal ID, then pass the component reference
+		modalComponent: { ref: ModalOne }
+	};
+						
 
 	export let data;
 
@@ -55,6 +64,8 @@
 <Toast position="t" />
 <Modal />
 
+<Modal components={modalRegistry}/>
+
 <AppShell
 	scrollbarGutter="auto"
 	slotSidebarLeft="bg-surface-500/5 w-64 p-4 {hideControls}"
@@ -64,11 +75,14 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<!-- TODO: set text to page title-->
-				<strong class="text-xl uppercase">CSRM</strong>
+				<strong class="text-xl">CSRM</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="hover:variant-ghost" use:popup={popupClick}>
-					{profile?.full_name}
+					{#if profile?.full_name} {profile?.full_name}
+					{:else if session?.user.email} {session?.user.email}
+					{/if}
+
 					<AngleDownSolid size="14" />
 				</button>
 			</svelte:fragment>

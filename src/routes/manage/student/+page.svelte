@@ -1,22 +1,65 @@
 <script lang="ts">
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { getModalStore, Table, tableMapperValues, type ModalSettings, type TableSource } from '@skeletonlabs/skeleton';
 
 	export let data;
+	const ADD_STUDENT_MODAL: number  = 1,
+	 	  EDIT_STUDENT_MODAL: number = 2,
+		  DELETE_STUDENT_MODAL: number = 3;
 
 	let { supabase, session, students } = data;
 	$: ({ supabase, session, students } = data);
 
 	let studentTable: any[] = students as any[];
 
-	const displayTable: TableSource = {
-		head: ['MSSV', 'Họ tên', 'Khoá'],
-		body: tableMapperValues(studentTable, ['student_id', 'full_name', 'school_year']),
-		meta: tableMapperValues(studentTable, ['id', 'student_id', 'full_name'])
-	};
-
 	function entrySelect(meta: any) {
 		console.log(meta);
+	};
+
+	const modalStore = getModalStore();
+
+	let fieldNames: any = [];
+	fieldNames = ['STT', 'MSV', 'Họ tên', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoá', 'Lớp'];
+
+	function openModal(type: number, index: number) {
+		let UpcomingMeta: any;
+
+		if (type === ADD_STUDENT_MODAL) {
+			UpcomingMeta = {
+				type: ADD_STUDENT_MODAL,
+			}
+		}
+		else if (type === EDIT_STUDENT_MODAL){
+			UpcomingMeta = {
+				type: EDIT_STUDENT_MODAL,
+				data: {
+					id:            studentTable[index].id,
+					student_id:    studentTable[index].student_id,
+					full_name:     studentTable[index].full_name,
+					date_of_birth: studentTable[index].date_of_birth,
+					gender: 	   studentTable[index].gender,
+					address:       studentTable[index].address,
+					phone_number:  studentTable[index].phone_number,
+					school_year:   studentTable[index].school_year,
+					class_name:    studentTable[index].class_name,
+				},
+			};
+		}
+		else {
+			UpcomingMeta = {
+				type: DELETE_STUDENT_MODAL,
+				data: { id: studentTable[index].id }
+			}
+		}
+
+		let DataModal: ModalSettings = {
+			type: 'component',
+			component: 'modalComponent',
+			meta: UpcomingMeta,
+		};
+
+		modalStore.trigger(DataModal);
 	}
+
 </script>
 
 <div class="[&>*]:py-4">
@@ -28,7 +71,45 @@
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
 		</span>
 	</div>
-	<div class="content">
-		<Table source={displayTable} interactive={true} on:selected={entrySelect} />
+	
+	<div>
+		<button type="button" class="hover:variant-filled-error bg-green-500"
+				on:click={() => openModal(1, -1)}>Thêm</button> 
+	</div>
+	<div class="table-container">
+		<table class="table table-hover">
+			<thead class="text-center">
+				<tr>
+					{#each fieldNames as fName}
+					<th>{fName}</th>
+					{/each}
+				</tr>
+			</thead>
+			<tbody>
+				{#each studentTable as studentRow, i}
+					<tr>
+						<td>{i + 1}</td>
+						
+						<!-- Don't blame me -->
+						<td>{studentRow?.student_id ?? 'Trống'}</td>
+						<td>{studentRow?.full_name ?? 'Trống'}</td>
+						<td>{studentRow?.date_of_birth ?? 'Trống'}</td>
+						<td>{studentRow?.gender ? 'Nữ' : 'Nam'}</td>
+						<td>{studentRow?.address ?? 'Trống'}</td>
+						<td>{studentRow?.phone_number ?? 'Trống'}</td>
+						<td>{studentRow?.school_year ?? 'Trống'}</td>
+						<td>{studentRow?.class_name ?? 'Trống'}</td>
+
+						<td>
+							<button type="button" class="hover:variant-filled-error bg-green-500"
+							 		on:click={() => openModal(EDIT_STUDENT_MODAL, i)}>Sửa</button>
+
+							<button type="button" class="hover:variant-filled-error bg-red-500"
+									on:click={() => openModal(DELETE_STUDENT_MODAL, i)}>Xoá</button>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
 </div>
