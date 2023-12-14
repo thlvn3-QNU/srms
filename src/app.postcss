@@ -18,9 +18,15 @@ input {
 
 button,
 input[type='submit'] {
-	@apply btn;
+	@apply btn cursor-pointer;
 }
 
 svg {
 	@apply mx-2;
+}
+
+@layer components {
+	.card-modal {
+		@apply card p-4 w-modal shadow-xl space-y-4;
+	}
 }
