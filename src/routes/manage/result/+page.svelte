@@ -9,25 +9,14 @@
 		CircleXmarkSolid
 	} from 'svelte-awesome-icons';
 
-	import { goto } from '$app/navigation';
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+
 	export let data;
 
 	let { supabase, session, score, classData, profiles, subject } = data;
 	$: ({ supabase, session, score, classData, profiles, subject } = data);
 
 	let scoreTable: any[] = score as any[];
-	const displayTable: TableSource = {
-		head: ['Tên sinh viên', 'Điểm quá trình', 'Điểm giữa kì', 'Điểm cuối kì', 'Điểm tổng'],
-		body: tableMapperValues(scoreTable, [
-			'full_name',
-			'progress',
-			'mid_term',
-			'last_term',
-			'total'
-		]),
-		meta: tableMapperValues(scoreTable, ['id'])
-	};
 
 	let classTable: any[] = classData as any[];
 	let profilesTable: any[] = profiles as any[];
@@ -38,11 +27,6 @@
 	let showModalEdit = false;
 	let showModalDelete = false;
 
-	function entrySelect(meta: any) {
-		// goto(`result/details?id=${meta.detail[0]}`);
-		const rowId = meta.target.closest('tr').dataset.id;
-		goto(`result/details?id=${rowId}`);
-	}
 	let score_subject = '';
 	scoreTable.filter((item) => {
 		score_subject = item.name;
@@ -71,23 +55,89 @@
 	let last_term = '';
 	let total = '';
 
+	onMount(async () => {
+		await getAllScores();
+	});
+
+	let getAllScores = async () => {
+		try {
+			let { data, error } = await supabase.from('score').select();
+		} catch (err) {
+			console.log(err);
+		}
+	};
 	let handelInsertResult = async () => {
-		const data = {
-			student_id: student_id,
-			class_id: class_id,
-			subject_id: subject_id,
-			progress: progress,
-			mid_term: mid_term,
-			last_term: last_term,
-			total: total
-		};
-		const { data: result, error } = await supabase.from('score').insert([{ data }]);
+		const { data, error } = await supabase.from('score').insert([
+			{
+				student_id: student_id,
+				class_id: class_id,
+				subject_id: subject_id,
+				progress: progress,
+				mid_term: mid_term,
+				last_term: last_term,
+				total: total
+			}
+		]);
 		if (error) {
 			alert('Thêm kết quả học tập thất bại!');
 			showModalInsert = !showModalInsert;
 		} else {
 			alert('Thêm kết quả học tập thành công!');
+			getAllScores();
 			showModalInsert = !showModalInsert;
+		}
+	};
+
+	let selectScoreId = '';
+	let setSelectScoreId = (id: any) => {
+		selectScoreId = id;
+		toggleModalDelete();
+	};
+	let handleDeleteResult = async (id: any) => {
+		const { error } = await supabase.from('score').delete().eq('id', id);
+
+		if (error) {
+			alert('Xóa kêt quả học tập thất bại ! ');
+		} else {
+			alert('Xóa kết quả học tập thành công');
+		}
+
+		toggleModalDelete();
+	};
+
+	let selectScoreDetails = '';
+	let handleFetchDetails = (id: any) => {
+		selectScoreDetails = id;
+		toggleModalDetails();
+	};
+
+	let selectEditScoreId = '';
+	let handleEditScore = (id: any) => {
+		selectEditScoreId = id;
+		console.log('a', selectEditScoreId);
+		toggleModalEdit();
+	};
+
+	let handleEditResult = async () => {
+		const { data, error } = await supabase
+			.from('score')
+			.update({
+				student_id: student_id,
+				class_id: class_id,
+				subject_id: subject_id,
+				progress: progress,
+				mid_term: mid_term,
+				last_term: last_term,
+				total: total
+			})
+			.eq('id', selectEditScoreId);
+		if (error) {
+			alert('Cập nhật kết quả học tập thất bại!');
+			showModalEdit = !showModalEdit;
+		} else {
+			alert('Cập nhật kết quả học tập thành công!');
+			getAllScores();
+			showModalEdit = !showModalEdit;
 		}
 	};
 </script>
@@ -134,17 +184,17 @@
 									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.name} </td>
 									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.total} </td>
 									<td
-										><button on:click={toggleModalDetails}>
+										><button on:click={() => handleFetchDetails(item.id)}>
 											<FileLinesRegular size="16" /></button
 										></td
 									>
 									<td
-										><button on:click={toggleModalEdit}>
+										><button on:click={() => handleEditScore(item.id)}>
 											<PenToSquareRegular size="16" /></button
 										></td
 									>
 									<td
-										><button on:click={toggleModalDelete}>
+										><button on:click={() => setSelectScoreId(item.id)}>
 											<TrashCanRegular size="16" /></button
 										></td
 									>
@@ -230,7 +280,7 @@
 										<option value="">Chọn tên sinh viên</option>
 
 										{#each profilesTable as item, index (item.id)}
-											<option value={item.student_id}>{item.full_name}</option>
+											<option value={item.id}>{item.full_name}</option>
 										{/each}
 									</select>
 								</div>
@@ -347,7 +397,51 @@
 						on:click={toggleModalDetails}><CircleXmarkSolid class="outline-none" /></button
 					>
 				</div>
-				<Table source={displayTable} interactive={true} on:selected={entrySelect} />
+				<div class="flex flex-col">
+					<div class="overflow-x-auto rounded-md">
+						<div class="inline-block min-w-full">
+							<div class="overflow-hidden">
+								<table class="min-w-full">
+									<thead class="">
+										<tr class="text-white font-bold bg-[#374151]">
+											<th scope="col" class="text-sm px-6 py-4 text-left">Mã sinh viên</th>
+											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm quá trình</th>
+											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm giữa kì </th>
+											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm cuối kì</th>
+											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm tổng </th>
+										</tr>
+									</thead>
+									<tbody>
+										{#each scoreTable as item, index (item.id)}
+											{#if item.id === selectScoreDetails}
+												<tr
+													class=" text-white transition duration-300 ease-in-out hover:bg-[#293648] bg-[#1f2937]"
+												>
+													<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+														>{item.student_id}
+													</td>
+													<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+														>{item.progress}
+													</td>
+
+													<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+														>{item.mid_term}
+													</td>
+													<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+														>{item.last_term}
+													</td>
+													<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+														>{item.total}
+													</td>
+												</tr>
+											{/if}
+										{/each}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -374,7 +468,12 @@
 
 				<!-- Modal body -->
 				<div class="p-4 md:p-5">
-					<form class="space-y-4" action="#">
+					<form
+						class="space-y-4"
+						method="POST"
+						action="#"
+						on:submit|preventDefault={handleEditResult}
+					>
 						<div>
 							<div class="flex gap-3">
 								<div class="w-1/2">
@@ -384,11 +483,12 @@
 
 									<select
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										bind:value={student_id}
 									>
-										<option>Chọn tên sinh viên</option>
+										<option value="">Chọn tên sinh viên</option>
 
 										{#each profilesTable as item, index (item.id)}
-											<option>{item.full_name}</option>
+											<option value={item.id}>{item.full_name}</option>
 										{/each}
 									</select>
 								</div>
@@ -397,13 +497,14 @@
 										>Lớp học</label
 									>
 									<select
-										id="category"
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										bind:value={class_id}
+										id="class_id"
 									>
-										<option>Chọn lớp học</option>
+										<option value="">Chọn lớp học</option>
 
 										{#each classTable as item, index (item.id)}
-											<option value="TV">{item.name}</option>
+											<option value={item.id}>{item.name}</option>
 										{/each}
 									</select>
 								</div>
@@ -415,10 +516,11 @@
 									>
 									<select
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+										bind:value={subject_id}
 									>
-										<option>Chọn môn học</option>
+										<option value="">Chọn môn học</option>
 										{#each subjectTable as item, index (item.id)}
-											<option value="TV">{item.name}</option>
+											<option value={item.id}>{item.name}</option>
 										{/each}
 									</select>
 								</div>
@@ -429,8 +531,7 @@
 									>
 									<input
 										type="text"
-										name="password"
-										id="password"
+										bind:value={progress}
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
 										required
 									/>
@@ -443,8 +544,7 @@
 									>
 									<input
 										type="text"
-										name="password"
-										id="password"
+										bind:value={mid_term}
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
 										required
 									/>
@@ -455,8 +555,7 @@
 									>
 									<input
 										type="text"
-										name="password"
-										id="password"
+										bind:value={last_term}
 										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
 										required
 									/>
@@ -469,8 +568,7 @@
 							>
 							<input
 								type="text"
-								name=""
-								id=""
+								bind:value={total}
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
 								required
 							/>
@@ -479,7 +577,7 @@
 						<button
 							type="submit"
 							class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							>Thêm</button
+							>Cập nhật</button
 						>
 					</form>
 				</div>
@@ -512,7 +610,7 @@
 							</button>
 							<button
 								class="w-[150px] mt-2 p-2.5 flex-1 text-white bg-red-600 rounded-md outline-none ring-offset-2 ring-red-600 focus:ring-2"
-								on:click={toggleModalDelete}
+								on:click={() => handleDeleteResult(selectScoreId)}
 							>
 								Xóa
 							</button>

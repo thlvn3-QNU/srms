@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
    
 	const { data: score } = await supabase
 		.from('score')
-		.select(`id, ...student_id(student_id, full_name, class_name), ...subject_id(name),...class_id(name), total ` );
+		.select(`id, ...student_id(student_id, full_name, class_name), ...subject_id(name),...class_id(name),progress , mid_term , last_term, total ` );
 
 		const { data: classData } = await supabase
 		.from('class')
