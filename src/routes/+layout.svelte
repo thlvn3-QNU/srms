@@ -27,6 +27,7 @@
 	$: ({ supabase, session, profile } = data);
 
 	let hideControls: string = '';
+
 	controlVisibility(session as unknown as Boolean); // wtf?
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
@@ -34,6 +35,7 @@
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
 			if (_session?.expires_at !== session?.expires_at) {
+				controlVisibility(true);
 				invalidate('supabase:auth');
 			}
 		});
