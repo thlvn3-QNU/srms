@@ -1,13 +1,14 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { randomUUID, type UUID } from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
 import { PUBLIC_SECRET_ROLE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 
-export const load: PageServerLoad = async ({ locals: { supabase, getSession } }) => {
+export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 
+	depends('student:reload');
+	
 	if (!session) {
 		throw redirect(303, '/');
 	}
@@ -27,8 +28,7 @@ export const actions = {
 		let ID: any;
 		const isInserting: boolean = formData.get('id') === 'undefined';
 
-		if (isInserting) {
-			
+		if (isInserting) {		
 			// Yes, I did it. God dammit.
 			// I don't want to put this in +layout, as this is not what we want to do 
 			const supabaseAdmin = createClient(
@@ -75,9 +75,14 @@ export const actions = {
 			permission: 0
 		}
 		
-		await supabase
+		let { error } = await supabase
 		.from('profiles')
 		.upsert(profile);
+
+		if (error) {
+			console.log(error);
+			return fail(400, { error: true });
+		}
     },
 
 	delete: async ({ locals: { supabase }, request }) => {
@@ -89,6 +94,11 @@ export const actions = {
 			PUBLIC_SECRET_ROLE_KEY
 		);
 
-		let { data, error } = await supabaseAdmin.auth.admin.deleteUser(ID);
+		let { error } = await supabaseAdmin.auth.admin.deleteUser(ID);
+
+		if (error) {
+			console.log(error);
+			return fail(400, { error: true });
+		}
 	}
 } satisfies Actions;

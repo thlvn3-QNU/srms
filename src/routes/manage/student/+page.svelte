@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getModalStore, Table, tableMapperValues, type ModalSettings, type TableSource } from '@skeletonlabs/skeleton';
+	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 
 	export let data;
 	const ADD_STUDENT_MODAL: number  = 1,
@@ -9,11 +9,8 @@
 	let { supabase, session, students } = data;
 	$: ({ supabase, session, students } = data);
 
-	let studentTable: any[] = students as any[];
-
-	function entrySelect(meta: any) {
-		console.log(meta);
-	};
+	let studentTable: any[];
+	$: studentTable = students as any[]; // Making table auto-updated without reloading
 
 	const modalStore = getModalStore();
 
@@ -85,6 +82,7 @@
 					{/each}
 				</tr>
 			</thead>
+
 			<tbody>
 				{#each studentTable as studentRow, i}
 					<tr>

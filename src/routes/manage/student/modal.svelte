@@ -1,8 +1,12 @@
 <script lang="ts"> 
-    import { getModalStore } from '@skeletonlabs/skeleton';
+    import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
+	import type { ActionData } from './$types';
+    import { enhance } from '$app/forms';
+	import { invalidate } from '$app/navigation';
 
     const modalStore = getModalStore();
+    const toastStore = getToastStore();
 
     const ADD_STUDENT_MODAL: number    = 1,
           EDIT_STUDENT_MODAL: number   = 2,
@@ -11,6 +15,7 @@
     const ID_INDEX: number = 10;
         
     export let parent: SvelteComponent;
+    export let form: ActionData;
 
     let labels: any = [];
     let inputNames: any = [];
@@ -18,6 +23,28 @@
     let studentID: any;
     let type: any = $modalStore[0].meta.type;
     let modalTitle: any;
+
+    function formEnhance() {
+        return async () => {
+            console.log(form);
+            if (form?.error) {
+                toastStore.trigger( {
+                    message: 'Không thể xử lí yêu cầu',
+                    background: 'variant-filled-error',
+                    hideDismiss: true
+                } )
+            }
+            else {
+                toastStore.trigger( {
+                    message: 'Thao tác thành công',
+                    background: 'variant-filled-secondary',
+                    hideDismiss: true
+                } )
+                invalidate('student:reload');
+                modalStore.close();
+            }
+        }
+    }
 
     if (type === EDIT_STUDENT_MODAL) {
         modalTitle = "Chỉnh sửa thông tin";
@@ -58,7 +85,7 @@
 		<article></article>
 
         {#if type === DELETE_STUDENT_MODAL}
-        <form class="{cForm}" method="POST" action="/">
+        <form class="{cForm}" method="POST" action="/" use:enhance={formEnhance}>
             <label class="label">{labels[0]}</label>
             <input type="text" name="id" value={studentID} hidden />
             <div class="{parent.regionFooter}">
@@ -68,7 +95,7 @@
         </form>
 
         {:else}
-		<form class="{cForm}" method="POST" action="/">
+		<form class="{cForm}" method="POST" action="/" use:enhance={formEnhance}>
             {#each labels as label, i}
                 <label class="label">
                     <span>{label}</span>
@@ -88,7 +115,7 @@
                 </label>
             {/each}
 
-            <!-- Sorry for this workaround. No others solutions could be found. -->
+            <!-- Sorry for this workaround. No other solutions could be found. -->
             <input name="id" class="input" type="text"
                 value={studentData[ID_INDEX]} hidden/> 
 
