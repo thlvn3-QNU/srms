@@ -57,6 +57,28 @@
 		modalStore.trigger(DataModal);
 	}
 
+	let SearchQuery: string = '';	
+
+	// A pure Javascript function. The dev is dumb. Deal with it lol
+	function searchTable() {
+		let query = SearchQuery.toUpperCase().trim();
+
+		let RowList = document.getElementsByTagName('tr');
+
+		for (let i = 0; i < RowList.length; i++) {
+			let CellList = RowList[i].getElementsByTagName('td');
+
+			for (let j = 0; j < CellList.length; j++) {
+				if (CellList[j] && CellList[j].innerHTML.toUpperCase().indexOf(query) > -1) {
+					RowList[i].style.display = "";
+					break;
+				}
+				else {
+					RowList[i].style.display = "none";
+				}
+			}
+		}
+	}
 </script>
 
 <div class="[&>*]:py-4">
@@ -65,7 +87,8 @@
 			<h2 class="h2">Danh sách sinh viên</h2>
 		</span>
 		<span>
-			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
+			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." bind:value={SearchQuery}
+				on:input={searchTable} />
 		</span>
 	</div>
 	
@@ -94,7 +117,7 @@
 						<td>{studentRow?.date_of_birth ?? 'Trống'}</td>
 						<td>{studentRow?.gender ? 'Nữ' : 'Nam'}</td>
 						<td>{studentRow?.address ?? 'Trống'}</td>
-						<td>{studentRow?.phone_number ?? 'Trống'}</td>
+						<td>{studentRow?.phone_number ? '0' + studentRow?.phone_number : 'Trống'}</td>
 						<td>{studentRow?.school_year ?? 'Trống'}</td>
 						<td>{studentRow?.class_name ?? 'Trống'}</td>
 
