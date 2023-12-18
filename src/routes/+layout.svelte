@@ -16,7 +16,6 @@
 	const modalStore = getModalStore();
 
 	const modalRegistry: Record<string, ModalComponent> = {
-		// Set a unique modal ID, then pass the component reference
 		modalComponent: { ref: ModalOne }
 	};
 						
