@@ -86,7 +86,7 @@
 
         {#if type === DELETE_STUDENT_MODAL}
         <form class="{cForm}" method="POST" action="/" use:enhance={formEnhance}>
-            <label class="label">{labels[0]}</label>
+            <label for="id" class="label">{labels[0]}</label>
             <input type="text" name="id" value={studentID} hidden />
             <div class="{parent.regionFooter}">
                 <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
