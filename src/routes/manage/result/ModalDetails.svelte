@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { CircleXmarkSolid } from 'svelte-awesome-icons';
+	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
 
 	export let showModalDetails: boolean;
 	export let toggle: any;
 
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
-
-	let data;
+	export let data: any;
 
 	let { supabase, session, score } = data;
 	$: ({ supabase, session, score } = data);
-	``;
 
 	let scoreTable: any[] = score as any[];
 
@@ -24,30 +22,26 @@
 	}
 </script>
 
+{#if showModalDetails}
+	<div class="">
+		<div class="relative rounded-lg shadow dark:bg-gray-700">
+			<div
+				class="flex items-center justify-between p-4 overflow-hidden"
+			>
+				<h3 class="h3">Kết quả học tập</h3>
+				<button type="button" on:click={toggle}><CircleXmarkSolid /></button>
+			</div>
 
-	{#if showModalDetails}
-		<div class=" fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 bg-black">
-			<div class="relative rounded-lg shadow dark:bg-gray-700">
-				<div
-					class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 overflow-hidden"
-				>
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Kết quả học tập</h3>
-					<button type="button" class="outline-none mr-0 hover:text-red-400" on:click={toggle}
-						><CircleXmarkSolid class="outline-none" /></button
-					>
-				</div>
-
-				<!-- Modal body -->
-				<div class="p-4 md:p-5">
-					<form class="space-y-4" action="#">
+			<!-- Modal body -->
+			<div class="p-4 md:p-5">
+				<form class="space-y-4" action="#">
+					<div class="content">
 						<div class="content">
-							<div class="content">
-								<Table source={displayTable} interactive={true} on:selected={entrySelect} />
-							</div>
+							<Table source={displayTable} interactive={true} on:selected={entrySelect} />
 						</div>
-					</form>
-				</div>
+					</div>
+				</form>
 			</div>
 		</div>
-	{/if}
+	</div>
 {/if}

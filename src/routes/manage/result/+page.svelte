@@ -8,8 +8,10 @@
 		AngleRightSolid,
 		CircleXmarkSolid
 	} from 'svelte-awesome-icons';
-
 	import { onMount } from 'svelte';
+	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+
+	let modalStore = getModalStore();
 
 	export let data;
 
@@ -91,7 +93,7 @@
 	let selectScoreId = '';
 	let setSelectScoreId = (id: any) => {
 		selectScoreId = id;
-		toggleModalDelete();
+		modalStore.trigger(modal);
 	};
 	let handleDeleteResult = async (id: any) => {
 		const { error } = await supabase.from('score').delete().eq('id', id);
@@ -101,8 +103,6 @@
 		} else {
 			alert('Xóa kết quả học tập thành công');
 		}
-
-		toggleModalDelete();
 	};
 
 	let selectScoreDetails = '';
@@ -140,6 +140,17 @@
 			showModalEdit = !showModalEdit;
 		}
 	};
+
+	const modal: ModalSettings = {
+		type: 'confirm',
+		title: 'Bạn có chắc chắn muốn xóa?',
+		response: (r: boolean) => {
+			if (r === true) {
+				handleDeleteResult(selectScoreId);
+			}
+		}
+	};
+	
 </script>
 
 <div class="[&>*]:py-4">
@@ -206,42 +217,11 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex justify-between ml-[20px] mt-[70px]">
-		<div class=" flex justify-between w-[120px]">
-			<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-			<div class="p-[6px] text-[20px] font-semibold">/</div>
-
-			<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-		</div>
-		<div class="mr-[24px] flex">
-			<div class="class mr-[30px]">
-				<button
-					class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-				>
-					<div class="pt-1 mr-[5px]">
-						<AngleLeftSolid size={'18px'} />
-					</div>
-					Trước
-				</button>
-			</div>
-
-			<div class="class">
-				<button
-					class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-				>
-					Sau
-					<div class="pl-[4px] pt-1">
-						<AngleRightSolid size={'18px'} />
-					</div>
-				</button>
-			</div>
-		</div>
-	</div>
 </div>
 
 <!-- Modal Insert -->
 {#if showModalInsert}
-	<div class="fixed inset-0 z-10 overflow-y-auto">
+	<div>
 		<div class="fixed inset-0 w-full h-full bg-black opacity-40" on:click={toggleModalInsert} />
 		<div
 			class="flex items-center min-h-screen px-4 py-8 fixed top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 w-1/3"
@@ -268,34 +248,20 @@
 					>
 						<div>
 							<div class="flex gap-3">
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Tên sinh viên
-									</label>
-
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={student_id}
-									>
+								<div class="">
+									<label for="student_name">Tên sinh viên </label>
+									<select bind:value={student_id} name="student_name">
 										<option value="">Chọn tên sinh viên</option>
-
-										{#each profilesTable as item, index (item.id)}
+										{#each profilesTable as item}
 											<option value={item.id}>{item.full_name}</option>
 										{/each}
 									</select>
 								</div>
 								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Lớp học</label
-									>
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={class_id}
-										id="class_id"
-									>
+									<label for="class_name">Lớp học</label>
+									<select bind:value={class_id} id="class_id" name="class_name">
 										<option value="">Chọn lớp học</option>
-
-										{#each classTable as item, index (item.id)}
+										{#each classTable as item}
 											<option value={item.id}>{item.name}</option>
 										{/each}
 									</select>
@@ -303,74 +269,37 @@
 							</div>
 							<div class="flex gap-3">
 								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Môn học</label
-									>
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={subject_id}
-									>
+									<label for="subject_name">Môn học</label>
+									<select bind:value={subject_id} name="subject_name">
 										<option value="">Chọn môn học</option>
-										{#each subjectTable as item, index (item.id)}
+										{#each subjectTable as item}
 											<option value={item.id}>{item.name}</option>
 										{/each}
 									</select>
 								</div>
 
 								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm quá trình</label
-									>
-									<input
-										type="text"
-										bind:value={progress}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
+									<label for="score-1">Điểm quá trình</label>
+									<input name="score-1" type="text" bind:value={progress} required />
 								</div>
 							</div>
 							<div class="flex gap-3">
 								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm giữa kì</label
-									>
-									<input
-										type="text"
-										bind:value={mid_term}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
+									<label for="score-2">Điểm giữa kì</label>
+									<input name="score-2" type="text" bind:value={mid_term} required />
 								</div>
 								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm cuối kì</label
-									>
-									<input
-										type="text"
-										bind:value={last_term}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
+									<label for="score-3">Điểm cuối kì</label>
+									<input name="score-3" type="text" bind:value={last_term} required />
 								</div>
 							</div>
 						</div>
 						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-								>Tổng điểm</label
-							>
-							<input
-								type="text"
-								bind:value={total}
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-								required
-							/>
+							<label for="total-score">Tổng điểm</label>
+							<input name="total-score" type="text" bind:value={total} required />
 						</div>
 
-						<button
-							type="submit"
-							class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							>Thêm</button
-						>
+						<button type="submit" class="variant-filled-primary w-full">Thêm</button>
 					</form>
 				</div>
 			</div>
@@ -406,9 +335,9 @@
 										<tr class="text-white font-bold bg-[#374151]">
 											<th scope="col" class="text-sm px-6 py-4 text-left">Mã sinh viên</th>
 											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm quá trình</th>
-											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm giữa kì </th>
-											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm cuối kì</th>
-											<th scope="col" class="text-sm px-6 py-4 text-left"> Điểm tổng </th>
+											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm giữa kì </th>
+											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm cuối kì</th>
+											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm tổng</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -439,181 +368,6 @@
 									</tbody>
 								</table>
 							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- Modal Edit -->
-{#if showModalEdit}
-	<div class="fixed inset-0 z-10 overflow-y-auto">
-		<div class="fixed inset-0 w-full h-full bg-black opacity-40" on:click={toggleModalEdit} />
-		<div
-			class="flex items-center min-h-screen px-4 py-8 fixed top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 w-1/3"
-		>
-			<div class="relative rounded-lg shadow dark:bg-gray-700">
-				<div
-					class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 overflow-hidden"
-				>
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Sửa kết quả học tập</h3>
-					<button
-						type="button"
-						class="outline-none mr-0 hover:text-red-400"
-						on:click={toggleModalEdit}><CircleXmarkSolid class="outline-none" /></button
-					>
-				</div>
-
-				<!-- Modal body -->
-				<div class="p-4 md:p-5">
-					<form
-						class="space-y-4"
-						method="POST"
-						action="#"
-						on:submit|preventDefault={handleEditResult}
-					>
-						<div>
-							<div class="flex gap-3">
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Tên sinh viên
-									</label>
-
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={student_id}
-									>
-										<option value="">Chọn tên sinh viên</option>
-
-										{#each profilesTable as item, index (item.id)}
-											<option value={item.id}>{item.full_name}</option>
-										{/each}
-									</select>
-								</div>
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Lớp học</label
-									>
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={class_id}
-										id="class_id"
-									>
-										<option value="">Chọn lớp học</option>
-
-										{#each classTable as item, index (item.id)}
-											<option value={item.id}>{item.name}</option>
-										{/each}
-									</select>
-								</div>
-							</div>
-							<div class="flex gap-3">
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Môn học</label
-									>
-									<select
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-										bind:value={subject_id}
-									>
-										<option value="">Chọn môn học</option>
-										{#each subjectTable as item, index (item.id)}
-											<option value={item.id}>{item.name}</option>
-										{/each}
-									</select>
-								</div>
-
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm quá trình</label
-									>
-									<input
-										type="text"
-										bind:value={progress}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
-								</div>
-							</div>
-							<div class="flex gap-3">
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm giữa kì</label
-									>
-									<input
-										type="text"
-										bind:value={mid_term}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
-								</div>
-								<div class="w-1/2">
-									<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-										>Điểm cuối kì</label
-									>
-									<input
-										type="text"
-										bind:value={last_term}
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-										required
-									/>
-								</div>
-							</div>
-						</div>
-						<div>
-							<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-								>Tổng điểm</label
-							>
-							<input
-								type="text"
-								bind:value={total}
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-								required
-							/>
-						</div>
-
-						<button
-							type="submit"
-							class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							>Cập nhật</button
-						>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-{/if}
-
-{#if showModalDelete}
-	<div class="fixed inset-0 z-10 overflow-y-auto">
-		<div class="fixed inset-0 w-full h-full bg-black opacity-40" on:click={toggleModalDelete} />
-		<div class="flex items-center min-h-screen px-4 py-8">
-			<div
-				class="relative w-full max-w-lg p-4 mx-auto dark:bg-gray-700 rounded-md shadow-lg h-[200px]"
-			>
-				<div class="mt-3 sm:flex">
-					<div class=" flex">
-						<h4 class="  text-lg font-medium text-white ml-[20px] mt-[10px]">
-							Bạn có chắc chắn muốn xóa ?
-						</h4>
-					</div>
-
-					<div class="mt-2 text-center sm:ml-4 sm:text-left absolute bottom-2 right-3">
-						<div class="items-center mt-3 font-bold">
-							<button
-								class="w-[150px] mt-2 p-2.5 flex-1 text-white rounded-md outline-none border ring-offset-2 ring-indigo-600 focus:ring-2 mr-5"
-								on:click={toggleModalDelete}
-							>
-								Hủy
-							</button>
-							<button
-								class="w-[150px] mt-2 p-2.5 flex-1 text-white bg-red-600 rounded-md outline-none ring-offset-2 ring-red-600 focus:ring-2"
-								on:click={() => handleDeleteResult(selectScoreId)}
-							>
-								Xóa
-							</button>
 						</div>
 					</div>
 				</div>
