@@ -8,23 +8,17 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 		throw redirect(303, '/');
 	}
 
-   
 	const { data: score } = await supabase
 		.from('score')
-		.select(`id, ...student_id(student_id, full_name, class_name), ...subject_id(name),...class_id(name),progress , mid_term , last_term, total ` );
+		.select(
+			`id, ...student_id(student_id, full_name, class_name), ...subject_id(name),...class_id(name),progress , mid_term , last_term, total `
+		);
 
-		const { data: classData } = await supabase
-		.from('class')
-		.select(`id , subject_id ,name  ` );
+	const { data: classData } = await supabase.from('class').select(`id , subject_id ,name  `);
 
-		const { data: profiles } = await supabase
-		.from('profiles')
-		.select(`id ,student_id , full_name ` );
+	const { data: profiles } = await supabase.from('profiles').select(`id ,student_id , full_name `);
 
-		const { data: subject } = await supabase
-		.from('subject')
-		.select(`id ,name  ` );
+	const { data: subject } = await supabase.from('subject').select(`id ,name  `);
 
-
-	return { session, score  , classData , profiles , subject};
+	return { session, score, classData, profiles, subject };
 };
