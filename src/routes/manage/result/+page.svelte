@@ -4,8 +4,6 @@
 		PenToSquareRegular,
 		FileLinesRegular,
 		TrashCanRegular,
-		AngleLeftSolid,
-		AngleRightSolid,
 		CircleXmarkSolid
 	} from 'svelte-awesome-icons';
 	import { onMount } from 'svelte';
@@ -150,7 +148,6 @@
 			}
 		}
 	};
-	
 </script>
 
 <div class="[&>*]:py-4">
@@ -161,39 +158,34 @@
 		</span>
 		<span class="flex gap-4 py-3">
 			<button class="variant-filled" on:click={toggleModalInsert}
-				><PlusSolid size="16" class="outline-none" />Thêm</button
+				><PlusSolid size="16" />Thêm</button
 			>
 			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." />
 		</span>
 	</div>
-	<div class="flex flex-col">
-		<div class="overflow-x-auto rounded-md">
-			<div class="inline-block min-w-full">
-				<div class="overflow-hidden">
-					<table class="min-w-full">
-						<thead class="">
-							<tr class="text-white font-bold bg-[#374151]">
-								<th scope="col" class="text-sm px-6 py-4 text-left">MSSV</th>
-								<th scope="col" class="text-sm px-6 py-4 text-left">Họ tên </th>
-								<th scope="col" class="text-sm px-6 py-4 text-left"> Lớp </th>
-								<th scope="col" class="text-sm px-6 py-4 text-left"> Tổng điểm </th>
-								<th scope="col" class="text-sm px-6 py-4 text-left"> Chi tiết </th>
-								<th scope="col" class="text-sm px-6 py-4 text-left"> Sửa </th>
-								<th scope="col" class="text-sm px-6 py-4 text-left"> Xóa </th>
+	<div>
+		<div>
+			<div>
+				<div>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>MSSV</th>
+								<th>Họ tên</th>
+								<th>Lớp</th>
+								<th>Tổng điểm</th>
+								<th>Chi tiết</th>
+								<th>Sửa</th>
+								<th>Xóa</th>
 							</tr>
 						</thead>
 						<tbody>
-							{#each scoreTable as item, index (item.id)}
-								<tr
-									class=" text-white transition duration-300 ease-in-out hover:bg-[#293648] bg-[#1f2937]"
-								>
-									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-										>{item.student_id}
-									</td>
-									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.full_name} </td>
-
-									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.name} </td>
-									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.total} </td>
+							{#each scoreTable as item}
+								<tr>
+									<td>{item.student_id}</td>
+									<td>{item.full_name}</td>
+									<td>{item.name} </td>
+									<td>{item.total} </td>
 									<td
 										><button on:click={() => handleFetchDetails(item.id)}>
 											<FileLinesRegular size="16" /></button
@@ -333,11 +325,11 @@
 								<table class="min-w-full">
 									<thead class="">
 										<tr class="text-white font-bold bg-[#374151]">
-											<th scope="col" class="text-sm px-6 py-4 text-left">Mã sinh viên</th>
-											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm quá trình</th>
-											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm giữa kì </th>
-											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm cuối kì</th>
-											<th scope="col" class="text-sm px-6 py-4 text-left">Điểm tổng</th>
+											<th>Mã sinh viên</th>
+											<th>Điểm quá trình</th>
+											<th>Điểm giữa kì </th>
+											<th>Điểm cuối kì</th>
+											<th>Điểm tổng</th>
 										</tr>
 									</thead>
 									<tbody>
