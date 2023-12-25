@@ -11,7 +11,6 @@
 	
 	// LongNhat's works - this is absolutely unhinged
 	import ModalOne from './manage/student/modal.svelte';
-
 	initializeStores();
 
 	const modalStore = getModalStore();
