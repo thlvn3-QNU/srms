@@ -11,7 +11,7 @@
 	let classTable: any[] = classes as any[];
 
 	const tableSimple: TableSource = {
-		head: ['Môn học', 'Giáo viên'],
+		head: ['Tên lớp học', 'Giáo viên'],
 		body: tableMapperValues(classTable, ['name', 'full_name']),
 		meta: tableMapperValues(classTable, ['id'])
 	};
@@ -27,8 +27,8 @@
 			<h2 class="h2">Danh sách lớp học</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled"><PlusSolid size="16"/>Thêm</button>
-			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled/>
+			<button class="variant-filled"><PlusSolid size="16" />Thêm</button>
+			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
 		</span>
 	</div>
 	<div class="content">

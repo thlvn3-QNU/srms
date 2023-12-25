@@ -7,10 +7,10 @@
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-  
-	import ModalOne from './manage/student/modal.svelte';
 	import Drawer from '$lib/Drawer.svelte';
-  
+	
+	// LongNhat's works - this is absolutely unhinged
+	import ModalOne from './manage/student/modal.svelte';
 	initializeStores();
 
 	const modalStore = getModalStore();
