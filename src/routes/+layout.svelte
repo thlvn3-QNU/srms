@@ -9,17 +9,8 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import Drawer from '$lib/Drawer.svelte';
 	
-	// LongNhat's works - this is absolutely unhinged
-	import ModalOne from './manage/student/modal.svelte';
 	initializeStores();
-
-	const modalStore = getModalStore();
-
-	const modalRegistry: Record<string, ModalComponent> = {
-		modalComponent: { ref: ModalOne }
-	};
-						
-
+	
 	export let data;
 
 	let { supabase, session, profile } = data;
@@ -64,8 +55,6 @@
 
 <Toast position="t" />
 <Modal />
-
-<Modal components={modalRegistry}/>
 
 <AppShell
 	scrollbarGutter="auto"

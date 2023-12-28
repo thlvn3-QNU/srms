@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { PlusSolid } from 'svelte-awesome-icons';
+	import modal from './modal.svelte';
 
 	export let data;
 	const ADD_STUDENT_MODAL: number = 1,
@@ -60,7 +61,7 @@
 
 		let DataModal: ModalSettings = {
 			type: 'component',
-			component: 'modalComponent',
+			component: { ref: modal },
 			meta: UpcomingMeta
 		};
 
