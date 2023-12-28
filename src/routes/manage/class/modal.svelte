@@ -23,16 +23,20 @@
 	let classData: any = [];
 	let type: any = $modalStore[0].meta.type;
 	let classID: any = $modalStore[0].meta.data.id;
-	let subjectList: any = [];
-	subjectList = $modalStore[0].meta.data.subjects;
-	let teacherList: any = [];
-	teacherList = $modalStore[0].meta.data.teachers;
+	let subjectList: any[];
+	let teacherList: any[];
 	let selectedTeacher: any = $modalStore[0].meta.data.current_teacher;
 	let selectedSubject: any = $modalStore[0].meta.data.current_subject;
+	teacherList = $modalStore[0].meta.data.teachers;
+	subjectList = $modalStore[0].meta.data.subjects;
+	
+	// https://codepen.io/TimPietrusky/pen/rKzoGN
+	var collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'});
+	subjectList.sort((a,b) => collator.compare(a.name, b.name));
+	teacherList.sort((a,b) => collator.compare(a.full_name, b.full_name));
 
 	function formEnhance() {
 		return async () => {
-			console.log(form);
 			if (form?.error) {
 				toastStore.trigger({
 					message: 'Không thể xử lí yêu cầu',
