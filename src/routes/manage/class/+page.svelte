@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Table, tableMapperValues, type ModalSettings, type TableSource, getModalStore } from '@skeletonlabs/skeleton';
-	import { PlusSolid } from 'svelte-awesome-icons';
+	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	import { ArrowDownAZSolid, PlusSolid } from 'svelte-awesome-icons';
 	import modal from './modal.svelte'
 
 	export let data;
@@ -17,7 +17,12 @@
 
 	let classTable: any[];
 	$: classTable = classes as any[];
-	let fieldNames: string[] = ['STT', 'Mã lớp học phần', 'Tên học phần', 'Giáo viên'];
+
+	
+	let fieldNames: string[] = ['Mã lớp học phần', 'Tên học phần', 'Giáo viên'];
+	let lmao: string[] = ['id', 'name', 'full_name'];
+	
+	let sortBy = { col: 'id', ascending: true };
 
 	function entry(index: number) {
 		goto(`class/details?id=` + index);
@@ -82,6 +87,24 @@
 			}
 		}
 	}
+
+	function SortTable(column: any) {
+		if (sortBy.col === column) {
+			sortBy.ascending = !sortBy.ascending;
+		}
+		else {
+			sortBy.col = column;
+			sortBy.ascending = true;
+		}
+
+		var collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'});
+		let compare = (a: any, b: any) => collator.compare(a[column], b[column]);
+
+		classTable = classTable.sort(compare);
+		if (!sortBy.ascending) classTable = classTable.reverse();
+	}
+
+	//SortTable('id'); // Why did this cause Internal Error?????????
 </script>
 
 <div class="[&>*]:py-4">
@@ -105,8 +128,8 @@
 		<table class="table table-hover">
 			<thead class="text-center">
 				<tr>
-					{#each fieldNames as fName}
-						<th>{fName}</th>
+					{#each fieldNames as fName, i}
+						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(lmao[i])} class="float-right"/></th>
 					{/each}
 				</tr>
 			</thead>
@@ -114,8 +137,6 @@
 			<tbody>
 				{#each classTable as classRow, i}
 					<tr>
-						<td>{i + 1}</td>
-
 						<!-- Don't blame me -->
 						<td on:click={() => entry(classRow.id)}>{classRow?.id ?? 'Trống'}</td>
 						<td on:click={() => entry(classRow.id)}>{classRow?.name ?? 'Trống'}</td>
