@@ -20,7 +20,8 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase, getSes
     
     const { data: teachers } = await supabase
         .from('profiles')
-        .select('id, full_name');
+        .select('id, full_name')
+		.eq('permission', 1);
 
     return { session, classes, subjects, teachers };
 };
