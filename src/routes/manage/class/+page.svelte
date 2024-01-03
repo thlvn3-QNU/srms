@@ -25,7 +25,7 @@
 	let sortBy = { col: 'id', ascending: true };
 
 	function entry(index: number) {
-		goto(`class/details?id=` + index);
+		goto(`class/details?id=${index}`);
 	}
 
 	function openModal(type: number, index: number) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ListBox, ListBoxItem, getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
