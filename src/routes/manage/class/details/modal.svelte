@@ -113,6 +113,5 @@
 				</div>
 			</form>
 		{/if}
-		<!-- prettier-ignore -->
 	</div>
 {/if}
