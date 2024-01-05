@@ -19,7 +19,7 @@
 	let classDescription: any = classDes;
 	
 	let fieldNames: string[] = ['Mã sinh viên', 'Tên', 'Ngày sinh'];
-	let lmao: string[] = ['student_id', 'full_name', 'date_of_birth'];
+	let fieldValues: string[] = ['student_id', 'full_name', 'date_of_birth'];
 	
 	let sortBy = { col: 'id', ascending: false };
 
@@ -113,7 +113,7 @@
 			<thead class="text-center">
 				<tr>
 					{#each fieldNames as fName, i}
-						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(lmao[i])} class="float-right"/></th>
+						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right"/></th>
 					{/each}
 				</tr>
 			</thead>

@@ -20,7 +20,7 @@
 
 	
 	let fieldNames: string[] = ['Mã lớp học phần', 'Tên học phần', 'Giáo viên'];
-	let lmao: string[] = ['id', 'name', 'full_name'];
+	let fieldValues: string[] = ['id', 'name', 'full_name'];
 	
 	let sortBy = { col: 'id', ascending: true };
 
@@ -129,7 +129,7 @@
 			<thead class="text-center">
 				<tr>
 					{#each fieldNames as fName, i}
-						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(lmao[i])} class="float-right"/></th>
+						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right"/></th>
 					{/each}
 				</tr>
 			</thead>
