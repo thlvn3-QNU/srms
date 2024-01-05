@@ -137,10 +137,15 @@
 			<tbody>
 				{#each classTable as classRow, i}
 					<tr>
-						<!-- Don't blame me -->
-						<td on:click={() => entry(classRow.id)}>{classRow?.id ?? 'Trống'}</td>
-						<td on:click={() => entry(classRow.id)}>{classRow?.name ?? 'Trống'}</td>
-						<td on:click={() => entry(classRow.id)}>{classRow?.full_name ?? 'Trống'}</td>
+						<td>{classRow?.id ?? 'Trống'}</td>
+						<td>{classRow?.name ?? 'Trống'}</td>
+						<td>{classRow?.full_name ?? 'Trống'}</td>
+						<td>
+							<button
+								type="button"
+								class="hover:variant-filled-error bg-blue-500"
+								on:click={() => entry(classRow.id)}>Danh sách</button
+							>
 						<td>
 							<button
 								type="button"
