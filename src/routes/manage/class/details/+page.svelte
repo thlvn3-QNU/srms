@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
 	import { ArrowDownAZSolid, PlusSolid } from 'svelte-awesome-icons';
-	import modal from './modal.svelte'
+	import modal from './modal.svelte';
 
 	export let data;
 
@@ -17,10 +17,10 @@
 	$: detailsTable = details as any[];
 
 	let classDescription: any = classDes;
-	
-	let fieldNames: string[] = ['Mã sinh viên', 'Tên', 'Ngày sinh'];
+
+	let fieldNames: string[] = ['Mã sinh viên', 'Tên', 'Ngày sinh', ''];
 	let fieldValues: string[] = ['student_id', 'full_name', 'date_of_birth'];
-	
+
 	let sortBy = { col: 'id', ascending: false };
 
 	function openModal(type: number, index: number) {
@@ -37,7 +37,7 @@
 		} else {
 			UpcomingMeta = {
 				type: DELETE_DETAILS_MODAL,
-				id: studentList?.find(x => x.student_id == detailsTable[index].student_id)?.id
+				id: studentList?.find((x) => x.student_id == detailsTable[index].student_id)?.id
 			};
 			console.log(UpcomingMeta);
 		}
@@ -75,13 +75,12 @@
 	function SortTable(column: any) {
 		if (sortBy.col === column) {
 			sortBy.ascending = !sortBy.ascending;
-		}
-		else {
+		} else {
 			sortBy.col = column;
 			sortBy.ascending = true;
 		}
 
-		var collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'});
+		var collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 		let compare = (a: any, b: any) => collator.compare(a[column], b[column]);
 
 		detailsTable = detailsTable.sort(compare);
@@ -94,14 +93,18 @@
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<h2 class="h2">Lớp: {classDescription[0].name}. Giáo viên: {classDescription[0].full_name ?? "Chưa có"}</h2>
+			<h2 class="h2">
+				Lớp: {classDescription[0].name}. Giáo viên: {classDescription[0].full_name ?? 'Chưa có'}
+			</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled" on:click={() => openModal(ADD_DETAILS_MODAL, -1)}><PlusSolid size="16" />Thêm</button>
-			<input 
-				type="text" 
-				name="search-box" 
-				id="search-box" 
+			<button class="variant-filled" on:click={() => openModal(ADD_DETAILS_MODAL, -1)}
+				><PlusSolid size="16" />Thêm</button
+			>
+			<input
+				type="text"
+				name="search-box"
+				id="search-box"
 				placeholder="Tìm kiếm..."
 				bind:value={SearchQuery}
 				on:input={searchTable}
@@ -113,7 +116,12 @@
 			<thead class="text-center">
 				<tr>
 					{#each fieldNames as fName, i}
-						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right"/></th>
+						<th>
+							{fName}
+							{#if fName !== ''}
+								<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right" />
+							{/if}
+						</th>
 					{/each}
 				</tr>
 			</thead>
