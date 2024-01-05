@@ -93,9 +93,8 @@
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<h2 class="h2">
-				Lớp: {classDescription[0].name}. Giáo viên: {classDescription[0].full_name ?? 'Chưa có'}
-			</h2>
+			<h2 class="h2">{classDescription[0].name ?? 'className'}</h2>
+			<p>Giáo viên: {classDescription[0].full_name ?? 'Chưa có'}</p>
 		</span>
 		<span class="flex gap-4">
 			<button class="variant-filled" on:click={() => openModal(ADD_DETAILS_MODAL, -1)}
