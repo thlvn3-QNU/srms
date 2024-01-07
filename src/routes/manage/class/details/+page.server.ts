@@ -35,7 +35,7 @@ export const actions = {
     upsert: async ({ locals: { supabase }, request }) => {
 		const formData = await request.formData();
 
-		let studentId = formData.get('student_id');
+		let studentId = formData.get('id');
 		let currentClass = formData.get('class');
 		
 		let { error } = await supabase

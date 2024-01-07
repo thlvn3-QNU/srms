@@ -4,12 +4,17 @@
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
+	import { Autocomplete } from '@skeletonlabs/skeleton';
+	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
+	import { ConvertToNoAccentVietnamese } from '$lib';
 
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
 
 	const ADD_DETAILS_MODAL: number = 1,
-		  DELETE_DETAILS_MODAL: number = 2;
+		  DELETE_DETAILS_MODAL: number = 2,
+		  ID_LIST: number = 3,
+		  NAME_LIST: number = 4;
 
 	const ID_INDEX: number = 10;
 
@@ -26,6 +31,16 @@
 	
 	var collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'});
 	studentList?.sort((a: any,b: any) => collator.compare(a.full_name, b.full_name));
+
+	class StudentData {
+		id: string = '';
+		student_id: string = '';
+		full_name: string = '';
+
+		toString(): string {
+			return `${this.student_id} + ${this.full_name}`;
+		}
+	};
 
 	function formEnhance() {
 		return async () => {
@@ -47,8 +62,8 @@
 		};
 	}
 
-	let currentStudentID = studentList?.[0].id;
-	$: currentStudentName = studentList?.find(x => x.id == currentStudentID).full_name;
+	//$: currentID = studentList?.[0].id;
+	//$: currentStudentName = studentList?.find(x => x.id == currentStudentID).full_name;
 
 	labels = ['Mã sinh viên', 'Họ tên'];
 	inputNames = ['id', 'full_name'];
@@ -58,6 +73,97 @@
 	} else {
 		modalTitle = 'Xoá sinh viên';
 		labels = ['Bạn có chắc chắn?'];
+	}			
+
+	let choosingStudent: StudentData = new StudentData;
+	let autocompleteList: AutocompleteOption<string>[] = BuildArrayForAutocomplete();
+
+	$: searchQuery = `${choosingStudent.student_id} ${choosingStudent.full_name}`;
+
+	function BuildArrayForAutocomplete() {
+		let builder: { label: string, value: string, keywords: string }[] = [];
+
+		studentList.forEach(function (student) {
+			let inserting = { 
+				label: `${student.student_id} - ${student.full_name}`, 
+				value: student.id, 
+				keywords: `${student.student_id}, ${student.full_name}, ${ConvertToNoAccentVietnamese(student.full_name)}`
+			};
+			builder.push(inserting);
+		});
+
+		console.log(builder[0].keywords);
+			
+			// studentList.forEach(function (student) {
+			// 	let inserting = { label: student.full_name, value: student.full_name, keywords: student.student_id };
+			// 	builder.push(inserting);
+			// })
+		return builder;
+	}
+
+	function onStudentSelection(event: CustomEvent<AutocompleteOption<string>>): void {
+		choosingStudent.id = event.detail.value;
+		console.log(choosingStudent.id);
+
+		UpdateChoosingStudent();
+	}
+
+	function UpdateChoosingStudent() {
+		let daStudent = studentList?.find(x => x.id == choosingStudent.id);
+
+		if (daStudent) {
+			choosingStudent.student_id = daStudent?.student_id;
+			choosingStudent.full_name = daStudent?.full_name;
+
+			UpdateInputStatus(true);
+		}
+		else {
+			UpdateInputStatus(false);
+		}
+
+		return true;
+	}
+
+	function UpdateChoosingStudent_SID() {
+		let daStudent = studentList?.find(x => x.student_id == choosingStudent.student_id);
+		if (daStudent) {
+			choosingStudent.id = daStudent?.id;
+			choosingStudent.full_name = daStudent?.full_name;
+		}
+		else {
+			choosingStudent.id = '';
+			choosingStudent.full_name = '';
+			UpdateInputStatus(false);
+		}
+
+		FilterAutocompleteList();
+
+		return true;
+	}
+
+	function UpdateChoosingStudent_SNAME() {
+		let daStudent = studentList?.find(x => x.full_name == choosingStudent.full_name);
+		if (daStudent) {
+			choosingStudent.id = daStudent?.id;
+			choosingStudent.student_id = daStudent?.student_id;
+		}
+		else {
+			choosingStudent.id = '';
+			choosingStudent.student_id = '';
+			UpdateInputStatus(false);
+		}
+
+		return true;
+	}
+
+	function UpdateInputStatus(status: boolean) {
+		//TODO: Disable confirmation button if false data
+	}
+
+	function ChangeFocusVisibility(type: number) {
+		if (type === ID_LIST) {
+
+		}
 	}
 
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
@@ -81,35 +187,47 @@
 			</form>
 		{:else}
 			<form class={cForm} method="POST" action="/" use:enhance={formEnhance}>
-				<label for="df" class="label">
-					<span>Mã sinh viên</span>
-					<select 
-						name="student_id" 
-						class="select" 
-						bind:value={currentStudentID}
-						required
-					>
-						{#each studentList as student, i}
-							<option value={student.id}>{student.student_id}</option>
-						{/each}
-					</select>
+				<div>
+					<div class="w-1/2 p-2 float-left">
+						<span>Mã sinh viên</span>
+						<input 
+							class="input" 
+							type="search" 
+							name="student_id" 
+							bind:value={choosingStudent.student_id}
+							on:input={() => UpdateChoosingStudent_SID()}
+							placeholder="Mã sinh viên..."
+						/>
+					</div>
 					
-					<span>Họ tên</span>
-					<input
-						class="input"
-						type="text"
-						bind:value={currentStudentName}
-						placeholder="Không có"
-						required
-						disabled
+					<div class="w-1/2 p-2 float-right">
+						<span>Họ tên</span>
+						<input 
+							class="input" 
+							type="search" 
+							name="full_name" 
+							bind:value={choosingStudent.full_name}
+							on:input={() => UpdateChoosingStudent_SNAME()}
+							placeholder="Họ tên sinh viên..." 
+						/>
+					</div>
+
+					<Autocomplete 
+						class="card border border-surface-500 mt-3 w-full max-w-sm max-h-48 p-4 overflow-y-auto"
+						bind:input={searchQuery} 
+						options={autocompleteList} 
+						on:selection={onStudentSelection} 
 					/>
-				</label>
+				</div>
 
-				<input name="class" type="hidden" value={currentClass}/>
-
-				<div class={parent.regionFooter}>
-					<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
-					<button class="btn {parent.buttonPositive}" formaction="?/upsert">Lưu</button>
+				<div class="button-base-styles ml-96">
+					<input name="class" type="hidden" bind:value={currentClass}/>
+					<input name="id" type="hidden" bind:value={choosingStudent.id}/>
+	
+					<div class={parent.regionFooter}>
+						<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
+						<button class="btn {parent.buttonPositive}" formaction="?/upsert">Lưu</button>
+					</div>
 				</div>
 			</form>
 		{/if}
