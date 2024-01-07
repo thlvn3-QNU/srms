@@ -1,180 +1,155 @@
-<script>
-	import {
-		ArrowDownAZSolid,
-		FileLinesRegular,
-		PenToSquareRegular,
-		TrashCanRegular,
-		AngleLeftSolid,
-		AngleRightSolid
-	} from 'svelte-awesome-icons';
+<script lang="ts">
+	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	import { ArrowDownAZSolid, PlusSolid } from 'svelte-awesome-icons';
+	import modal from './modal.svelte';
 
-	let MenuDelete = false;
-	let showMenuDelete = () => {
-		MenuDelete = !MenuDelete;
-	};
+	export let data;
+
+	const modalStore = getModalStore();
+
+	const ADD_DETAILS_MODAL = 1,
+		DELETE_DETAILS_MODAL = 2;
+
+	let { supabase, session, details, classDes, studentList } = data;
+	$: ({ supabase, session, details, classDes, studentList } = data);
+
+	let detailsTable: any[];
+	$: detailsTable = details as any[];
+
+	let classDescription: any = classDes;
+
+	let fieldNames: string[] = ['Mã sinh viên', 'Tên', 'Ngày sinh', ''];
+	let fieldValues: string[] = ['student_id', 'full_name', 'date_of_birth'];
+
+	let sortBy = { col: 'id', ascending: false };
+
+	function openModal(type: number, index: number) {
+		let UpcomingMeta: any;
+
+		if (type === ADD_DETAILS_MODAL) {
+			UpcomingMeta = {
+				type: ADD_DETAILS_MODAL,
+				data: {
+					students: studentList,
+					class: classDescription[0].id
+				}
+			};
+		} else {
+			UpcomingMeta = {
+				type: DELETE_DETAILS_MODAL,
+				id: studentList?.find((x) => x.student_id == detailsTable[index].student_id)?.id
+			};
+			console.log(UpcomingMeta);
+		}
+
+		let DataModal: ModalSettings = {
+			type: 'component',
+			component: { ref: modal },
+			meta: UpcomingMeta
+		};
+
+		modalStore.trigger(DataModal);
+	}
+
+	let SearchQuery: string = '';
+
+	function searchTable() {
+		let query = SearchQuery.toUpperCase().trim();
+
+		let RowList = document.getElementsByTagName('tr');
+
+		for (let i = 0; i < RowList.length; i++) {
+			let CellList = RowList[i].getElementsByTagName('td');
+
+			for (let j = 0; j < CellList.length; j++) {
+				if (CellList[j] && CellList[j].innerHTML.toUpperCase().indexOf(query) > -1) {
+					RowList[i].style.display = '';
+					break;
+				} else {
+					RowList[i].style.display = 'none';
+				}
+			}
+		}
+	}
+
+	function SortTable(column: any) {
+		if (sortBy.col === column) {
+			sortBy.ascending = !sortBy.ascending;
+		} else {
+			sortBy.col = column;
+			sortBy.ascending = true;
+		}
+
+		var collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+		let compare = (a: any, b: any) => {
+			if (typeof a[column] === typeof "lmao") {
+				let aWords = (a[column] as string).split(' '),
+				bWords = (b[column] as string).split(' ');
+				return collator.compare(aWords[aWords.length - 1], bWords[bWords.length - 1]);
+			}
+			else {
+				return collator.compare(a[column], b[column]);
+			}
+		}
+
+		detailsTable = detailsTable.sort(compare);
+		if (!sortBy.ascending) detailsTable = detailsTable.reverse();
+	}
+
+	//SortTable('id'); // Why did this cause Internal Error?????????
 </script>
 
-<main>
-	<div class="">
-		<div class="flex">
-			<div class="" />
-
-			<div class="flex-1">
-				<div class="  m-[20px] py-[10px] pl-[10px] text-[18px] font-medium">
-					Xem thông tin lớp học
-				</div>
-
-				<div class=" flex justify-between ml-[20px] mt-[70px]">
-					<div class="mr-[24px]">
-						<button
-							class="px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px] mr-[20px]"
-						>
-							Tìm kiếm
-						</button>
-
-						<input type="text" class="border shadow py-1 px-2 outline-none" />
-					</div>
-				</div>
-
-				<div class=" m-[20px] flex">
-					<table>
-						<thead class="">
-							<tr class="">
-								<th class="w-[80px] py-1 px-2">
-									<div class="float-left">STT</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[200px] py-1 px-2">
-									<div class="float-left">Mã sinh viên</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[240px] py-1 px-2">
-									<div class="float-left">Tên sinh viên</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[200px] py-1 px-2">
-									<div class="float-left">Ngày sinh</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[220px] py-1 px-2">
-									<div class="float-left">Địa chỉ</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-								<th class="w-[220px] py-1 px-2">
-									<div class="float-left">Số điện thoại</div>
-									<div class="mt-1 float-right">
-										<ArrowDownAZSolid size={'18px'} />
-									</div>
-								</th>
-
-								<th class="w-[100px] py-1 px-2">
-									<div class=" ">Sửa</div>
-								</th>
-								<th class="w-[100px] py-1 px-2">
-									<div class="">Xóa</div>
-								</th>
-							</tr>
-						</thead>
-						<tbody class="">
-							<tr class="">
-								<td>1</td>
-								<td>445102484</td>
-								<td>Nguyễn Văn A</td>
-								<td>03-01-2003</td>
-								<td>An Nhơn - Bình Định</td>
-								<td>0304585834</td>
-
-								<td>
-									<div class="p-[10px] flex justify-center items-center">
-										<PenToSquareRegular size={'18px'} />
-									</div>
-								</td>
-								<td>
-									<div class="p-[10px] flex justify-center items-center">
-										<button on:click={showMenuDelete} class="hover:text-red-600">
-											<TrashCanRegular size={'18px'} />
-										</button>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-
-				<div class="flex justify-between ml-[20px] mt-[70px]">
-					<div class=" flex justify-between w-[120px]">
-						<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-						<div class="p-[6px] text-[20px] font-semibold">/</div>
-
-						<div class="shadow border-solid py-[8px] px-[16px] font-bold">1</div>
-					</div>
-					<div class="mr-[24px] flex">
-						<div class="class mr-[30px]">
-							<button
-								class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-							>
-								<div class="pt-1 mr-[5px]"><AngleLeftSolid size={'18px'} /></div>
-								Trước
-							</button>
-						</div>
-
-						<div class="class">
-							<button
-								class="min-w-[80px] flex justify-between px-[10px] py-[5px] bg-blue-400 hover:bg-blue-300 text-[16px] font-medium rounded-[5px]"
-							>
-								Sau
-								<div class="pt-1 mr-[5px]"><AngleRightSolid size={'18px'} /></div>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	{#if MenuDelete}
-		<div class="fixed inset-0 z-10 overflow-y-auto">
-			<div
-				class="fixed inset-0 w-full h-full bg-black opacity-40"
-				on:click={() => (MenuDelete = !MenuDelete)}
+<div class="[&>*]:py-4">
+	<div class="header flex flex-row justify-between w-full">
+		<span>
+			<h2 class="h2">{classDescription[0].name ?? 'className'}</h2>
+			<p>Giáo viên: {classDescription[0].full_name ?? 'Chưa có'}</p>
+		</span>
+		<span class="flex gap-4">
+			<button class="variant-filled" on:click={() => openModal(ADD_DETAILS_MODAL, -1)}
+				><PlusSolid size="16" />Thêm</button
+			>
+			<input
+				type="text"
+				name="search-box"
+				id="search-box"
+				placeholder="Tìm kiếm..."
+				bind:value={SearchQuery}
+				on:input={searchTable}
 			/>
-			<div class="flex items-center min-h-screen px-4 py-8">
-				<div class="relative w-full max-w-lg p-4 mx-auto bg-white rounded-md shadow-lg h-[200px]">
-					<div class="mt-3 sm:flex">
-						<div class=" flex">
-							<h4 class="  text-lg font-medium text-gray-800 ml-[20px] mt-[10px]">
-								Bạn có chắc chắn muốn xóa ?
-							</h4>
-						</div>
+		</span>
+	</div>
+	<div class="content">
+		<table class="table table-hover">
+			<thead class="text-center">
+				<tr>
+					{#each fieldNames as fName, i}
+						<th>
+							{fName}
+							{#if fName !== ''}
+								<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right" />
+							{/if}
+						</th>
+					{/each}
+				</tr>
+			</thead>
 
-						<div class="mt-2 text-center sm:ml-4 sm:text-left absolute bottom-2 right-3">
-							<div class="items-center mt-3 font-bold">
-								<button
-									class="w-[150px] mt-2 p-2.5 flex-1 text-gray-800 rounded-md outline-none border ring-offset-2 ring-indigo-600 focus:ring-2 mr-5"
-									on:click={showMenuDelete}
-								>
-									Hủy
-								</button>
-								<button
-									class="w-[150px] mt-2 p-2.5 flex-1 text-white bg-red-600 rounded-md outline-none ring-offset-2 ring-red-600 focus:ring-2"
-									on:click={showMenuDelete}
-								>
-									Xóa
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	{/if}
-</main>
+			<tbody>
+				{#each detailsTable as detailsRow, i}
+					<tr>
+						<td>{detailsRow?.student_id ?? 'Trống'}</td>
+						<td>{detailsRow?.full_name ?? 'Trống'}</td>
+						<td>{detailsRow?.date_of_birth ?? 'Trống'}</td>
+						<td>
+							<button
+								type="button"
+								class="hover:variant-filled-error bg-red-500"
+								on:click={() => openModal(DELETE_DETAILS_MODAL, i)}>Xoá</button
+							>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+</div>
