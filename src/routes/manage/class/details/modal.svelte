@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+	import { getModalStore, getToastStore, popup } from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
@@ -12,11 +12,7 @@
 	const toastStore = getToastStore();
 
 	const ADD_DETAILS_MODAL: number = 1,
-		  DELETE_DETAILS_MODAL: number = 2,
-		  ID_LIST: number = 3,
-		  NAME_LIST: number = 4;
-
-	const ID_INDEX: number = 10;
+		  DELETE_DETAILS_MODAL: number = 2;
 
 	export let parent: SvelteComponent;
 	export let form: ActionData;
@@ -25,7 +21,6 @@
 	let labels: any = [];
 	let inputNames: any = [];
 	let type: any = $modalStore[0].meta.type;
-	let studentID: any = $modalStore[0].meta.id;
 	let currentClass: any = $modalStore[0].meta.data?.class;
 	let studentList: any[] = $modalStore[0].meta.data?.students;
 	
@@ -62,9 +57,6 @@
 		};
 	}
 
-	//$: currentID = studentList?.[0].id;
-	//$: currentStudentName = studentList?.find(x => x.id == currentStudentID).full_name;
-
 	labels = ['Mã sinh viên', 'Họ tên'];
 	inputNames = ['id', 'full_name'];
 
@@ -75,13 +67,19 @@
 		labels = ['Bạn có chắc chắn?'];
 	}			
 
-	let choosingStudent: StudentData = new StudentData;
-	let autocompleteList: AutocompleteOption<string>[] = BuildArrayForAutocomplete();
+	let currentStudent: StudentData = new StudentData;
+	let autocompleteList: AutocompleteOption<string>[];
 
-	$: searchQuery = `${choosingStudent.student_id} ${choosingStudent.full_name}`;
+	currentStudent.id = $modalStore[0]?.meta.id ?? '';
+	if (type === ADD_DETAILS_MODAL) {
+		autocompleteList = BuildArrayForAutocomplete();
+	}
+	
+	// For `Autocomplete` element filtering
+	$: searchQuery = `${currentStudent.student_id} ${currentStudent.full_name}`;
 
 	function BuildArrayForAutocomplete() {
-		let builder: { label: string, value: string, keywords: string }[] = [];
+		let daList: { label: string, value: string, keywords: string }[] = [];
 
 		studentList.forEach(function (student) {
 			let inserting = { 
@@ -89,81 +87,71 @@
 				value: student.id, 
 				keywords: `${student.student_id}, ${student.full_name}, ${ConvertToNoAccentVietnamese(student.full_name)}`
 			};
-			builder.push(inserting);
+			daList.push(inserting);
 		});
 
-		console.log(builder[0].keywords);
-			
-			// studentList.forEach(function (student) {
-			// 	let inserting = { label: student.full_name, value: student.full_name, keywords: student.student_id };
-			// 	builder.push(inserting);
-			// })
-		return builder;
+		return daList;
 	}
 
 	function onStudentSelection(event: CustomEvent<AutocompleteOption<string>>): void {
-		choosingStudent.id = event.detail.value;
-		console.log(choosingStudent.id);
+		currentStudent.id = event.detail.value;
 
-		UpdateChoosingStudent();
+		UpdatecurrentStudent();
 	}
 
-	function UpdateChoosingStudent() {
-		let daStudent = studentList?.find(x => x.id == choosingStudent.id);
+	function UpdatecurrentStudent() {
+		let daStudent = studentList?.find(x => x.id == currentStudent.id);
 
 		if (daStudent) {
-			choosingStudent.student_id = daStudent?.student_id;
-			choosingStudent.full_name = daStudent?.full_name;
+			currentStudent.student_id = daStudent?.student_id;
+			currentStudent.full_name = daStudent?.full_name;
 
-			UpdateInputStatus(true);
+			SetSubmissionStatus(true);
 		}
 		else {
-			UpdateInputStatus(false);
+			SetSubmissionStatus(false);
 		}
 
 		return true;
 	}
 
-	function UpdateChoosingStudent_SID() {
-		let daStudent = studentList?.find(x => x.student_id == choosingStudent.student_id);
+	function UpdatecurrentStudent_SID() {
+		let daStudent = studentList?.find(x => x.student_id == currentStudent.student_id);
 		if (daStudent) {
-			choosingStudent.id = daStudent?.id;
-			choosingStudent.full_name = daStudent?.full_name;
+			currentStudent.id = daStudent?.id;
+			currentStudent.full_name = daStudent?.full_name;
+
+			SetSubmissionStatus(true);
 		}
 		else {
-			choosingStudent.id = '';
-			choosingStudent.full_name = '';
-			UpdateInputStatus(false);
-		}
-
-		FilterAutocompleteList();
-
-		return true;
-	}
-
-	function UpdateChoosingStudent_SNAME() {
-		let daStudent = studentList?.find(x => x.full_name == choosingStudent.full_name);
-		if (daStudent) {
-			choosingStudent.id = daStudent?.id;
-			choosingStudent.student_id = daStudent?.student_id;
-		}
-		else {
-			choosingStudent.id = '';
-			choosingStudent.student_id = '';
-			UpdateInputStatus(false);
+			currentStudent.id = '';
+			currentStudent.full_name = '';
+			SetSubmissionStatus(false);
 		}
 
 		return true;
 	}
 
-	function UpdateInputStatus(status: boolean) {
-		//TODO: Disable confirmation button if false data
+	function UpdatecurrentStudent_SNAME() {
+		let daStudent = studentList?.find(x => x.full_name == currentStudent.full_name);
+		if (daStudent) {
+			currentStudent.id = daStudent?.id;
+			currentStudent.student_id = daStudent?.student_id;
+
+			SetSubmissionStatus(true);
+		}
+		else {
+			currentStudent.id = '';
+			currentStudent.student_id = '';
+			SetSubmissionStatus(false);
+		}
+
+		return true;
 	}
 
-	function ChangeFocusVisibility(type: number) {
-		if (type === ID_LIST) {
-
-		}
+	function SetSubmissionStatus(state: boolean) {
+		const daButton = document.getElementById("submit-button") as HTMLInputElement;
+		if (daButton) daButton.disabled = !state;
 	}
 
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
@@ -177,26 +165,39 @@
 		<article />
 
 		{#if type === DELETE_DETAILS_MODAL}
-			<form class={cForm} method="POST" action="/" use:enhance={formEnhance}>
+			<form class={cForm} method="POST" action="?/delete" use:enhance={formEnhance}>
 				<label for="id" class="label">{labels[0]}</label>
-				<input type="hidden" name="id" value={studentID}/>
+				<input type="hidden" name="id" value={currentStudent.id}/>
 				<div class={parent.regionFooter}>
-					<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
-					<button class="btn {parent.buttonPositive}" formaction="?/delete">Xoá</button>
+					<button 
+						type="button" 
+						class="btn {parent.buttonNeutral}" 
+						on:click={parent.onClose}
+					>
+						Huỷ
+					</button>
+
+					<button 
+						type="submit" 
+						class="btn {parent.buttonPositive}"
+					>
+						Xoá
+					</button>
 				</div>
 			</form>
 		{:else}
-			<form class={cForm} method="POST" action="/" use:enhance={formEnhance}>
+			<form class={cForm} method="POST" action="?/upsert" use:enhance={formEnhance}>
 				<div>
 					<div class="w-1/2 p-2 float-left">
 						<span>Mã sinh viên</span>
 						<input 
 							class="input" 
-							type="search" 
-							name="student_id" 
-							bind:value={choosingStudent.student_id}
-							on:input={() => UpdateChoosingStudent_SID()}
+							type="search"
+							name="student_id"
+							bind:value={currentStudent.student_id}
+							on:input={() => UpdatecurrentStudent_SID()}
 							placeholder="Mã sinh viên..."
+							autocomplete="off"
 						/>
 					</div>
 					
@@ -206,9 +207,10 @@
 							class="input" 
 							type="search" 
 							name="full_name" 
-							bind:value={choosingStudent.full_name}
-							on:input={() => UpdateChoosingStudent_SNAME()}
+							bind:value={currentStudent.full_name}
+							on:input={() => UpdatecurrentStudent_SNAME()}
 							placeholder="Họ tên sinh viên..." 
+							autocomplete="off"
 						/>
 					</div>
 
@@ -222,11 +224,25 @@
 
 				<div class="button-base-styles ml-96">
 					<input name="class" type="hidden" bind:value={currentClass}/>
-					<input name="id" type="hidden" bind:value={choosingStudent.id}/>
+					<input name="id" type="hidden" bind:value={currentStudent.id}/>
 	
 					<div class={parent.regionFooter}>
-						<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Huỷ</button>
-						<button class="btn {parent.buttonPositive}" formaction="?/upsert">Lưu</button>
+						<button 
+							type="button"
+							class="btn {parent.buttonNeutral}" 
+							on:click={parent.onClose}
+						>
+							Huỷ
+						</button>
+
+						<button 
+							type="submit"
+							id="submit-button" 
+							class="btn {parent.buttonPositive}"
+							disabled
+						>
+							Lưu
+						</button>
 					</div>
 				</div>
 			</form>
