@@ -81,7 +81,16 @@
 		}
 
 		var collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-		let compare = (a: any, b: any) => collator.compare(a[column], b[column]);
+		let compare = (a: any, b: any) => {
+			if (typeof a[column] === typeof "lmao") {
+				let aWords = (a[column] as string).split(' '),
+				bWords = (b[column] as string).split(' ');
+				return collator.compare(aWords[aWords.length - 1], bWords[bWords.length - 1]);
+			}
+			else {
+				return collator.compare(a[column], b[column]);
+			}
+		}
 
 		detailsTable = detailsTable.sort(compare);
 		if (!sortBy.ascending) detailsTable = detailsTable.reverse();
