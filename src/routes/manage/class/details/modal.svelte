@@ -76,7 +76,17 @@
 	}
 	
 	// For `Autocomplete` element filtering
-	$: searchQuery = `${currentStudent.student_id} ${currentStudent.full_name}`;
+	// TODO: actually fix this crap.
+	let searchQuery: string;
+	$: {
+		searchQuery = `${currentStudent.student_id} ${currentStudent.full_name}`;
+
+		// Workaround to fix showing `No Results Found.` when inputs have correct information.
+		const checkSomethingIDK = document.getElementById("submit-button") as HTMLInputElement;
+		if (checkSomethingIDK && checkSomethingIDK.disabled == false) {
+			searchQuery = `${currentStudent.student_id} - ${currentStudent.full_name}`;
+		}
+	}
 
 	function BuildArrayForAutocomplete() {
 		let daList: { label: string, value: string, keywords: string }[] = [];
@@ -213,13 +223,14 @@
 							autocomplete="off"
 						/>
 					</div>
-
-					<Autocomplete 
-						class="card border border-surface-500 mt-3 w-full max-w-sm max-h-48 p-4 overflow-y-auto"
-						bind:input={searchQuery} 
-						options={autocompleteList} 
-						on:selection={onStudentSelection} 
-					/>
+					
+					<div class="card border border-surface-500 w-full max-h-48 p-2 overflow-y-auto">
+						<Autocomplete 
+							bind:input={searchQuery} 
+							options={autocompleteList} 
+							on:selection={onStudentSelection} 
+						/>
+					</div>
 				</div>
 
 				<div class="button-base-styles ml-96">
