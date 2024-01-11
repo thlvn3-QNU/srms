@@ -18,7 +18,7 @@
 	let classTable: any[];
 	$: classTable = classes as any[];
 
-	let fieldNames: string[] = ['Mã lớp học phần', 'Tên học phần', 'Giáo viên', '', ''];
+	let fieldNames: string[] = ['ID', 'Tên học phần', 'Giáo viên', '', ''];
 	let fieldValues: string[] = ['id', 'name', 'full_name'];
 
 	let sortBy = { col: 'id', ascending: true };
