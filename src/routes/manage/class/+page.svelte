@@ -2,15 +2,15 @@
 	import { goto } from '$app/navigation';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
 	import { ArrowDownAZSolid, PlusSolid } from 'svelte-awesome-icons';
-	import modal from './modal.svelte'
+	import modal from './modal.svelte';
 
 	export let data;
 
 	const modalStore = getModalStore();
 
 	const ADD_CLASS_MODAL = 1,
-		  EDIT_CLASS_MODAL = 2,
-		  DELETE_CLASS_MODAL = 3;
+		EDIT_CLASS_MODAL = 2,
+		DELETE_CLASS_MODAL = 3;
 
 	let { supabase, session, classes, subjects, teachers } = data;
 	$: ({ supabase, session, classes, subjects, teachers } = data);
@@ -18,14 +18,13 @@
 	let classTable: any[];
 	$: classTable = classes as any[];
 
-	
-	let fieldNames: string[] = ['Mã lớp học phần', 'Tên học phần', 'Giáo viên'];
-	let lmao: string[] = ['id', 'name', 'full_name'];
-	
+	let fieldNames: string[] = ['ID', 'Tên học phần', 'Giáo viên', '', ''];
+	let fieldValues: string[] = ['id', 'name', 'full_name'];
+
 	let sortBy = { col: 'id', ascending: true };
 
 	function entry(index: number) {
-		goto(`class/details?id=` + index);
+		goto(`class/details?id=${index}`);
 	}
 
 	function openModal(type: number, index: number) {
@@ -91,13 +90,12 @@
 	function SortTable(column: any) {
 		if (sortBy.col === column) {
 			sortBy.ascending = !sortBy.ascending;
-		}
-		else {
+		} else {
 			sortBy.col = column;
 			sortBy.ascending = true;
 		}
 
-		var collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'});
+		var collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 		let compare = (a: any, b: any) => collator.compare(a[column], b[column]);
 
 		classTable = classTable.sort(compare);
@@ -113,11 +111,13 @@
 			<h2 class="h2">Danh sách lớp học</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled" on:click={() => openModal(ADD_CLASS_MODAL, -1)}><PlusSolid size="16" />Thêm</button>
-			<input 
-				type="text" 
-				name="search-box" 
-				id="search-box" 
+			<button class="variant-filled" on:click={() => openModal(ADD_CLASS_MODAL, -1)}
+				><PlusSolid size="16" />Thêm</button
+			>
+			<input
+				type="text"
+				name="search-box"
+				id="search-box"
 				placeholder="Tìm kiếm..."
 				bind:value={SearchQuery}
 				on:input={searchTable}
@@ -129,7 +129,12 @@
 			<thead class="text-center">
 				<tr>
 					{#each fieldNames as fName, i}
-						<th>{fName}<ArrowDownAZSolid on:click={() => SortTable(lmao[i])} class="float-right"/></th>
+						<th>
+							{fName}
+							{#if fName !== ''}
+								<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right" />
+							{/if}
+						</th>
 					{/each}
 				</tr>
 			</thead>
@@ -137,11 +142,16 @@
 			<tbody>
 				{#each classTable as classRow, i}
 					<tr>
-						<!-- Don't blame me -->
-						<td on:click={() => entry(classRow.id)}>{classRow?.id ?? 'Trống'}</td>
-						<td on:click={() => entry(classRow.id)}>{classRow?.name ?? 'Trống'}</td>
-						<td on:click={() => entry(classRow.id)}>{classRow?.full_name ?? 'Trống'}</td>
+						<td>{classRow?.id ?? 'Trống'}</td>
+						<td>{classRow?.name ?? 'Trống'}</td>
+						<td>{classRow?.full_name ?? 'Trống'}</td>
 						<td>
+							<button
+								type="button"
+								class="hover:variant-filled-error bg-blue-500"
+								on:click={() => entry(classRow.id)}>Danh sách</button
+							>
+						</td><td>
 							<button
 								type="button"
 								class="hover:variant-filled-error bg-green-500"
