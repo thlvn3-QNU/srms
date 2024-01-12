@@ -58,7 +58,7 @@
 		const { data: scoreData } = await supabase
 			.from('score')
 			.select(
-				'id, id_student ,...id_student(student_id, full_name),subject_id, ...subject_id(name) ,progress , mid_term , last_term, total '
+				'id, student_id ,...student_id(student_id, full_name),subject_id, ...subject_id(name) ,progress , mid_term , last_term, total '
 			)
 			.eq('id', meta.detail[0])
 			.single();

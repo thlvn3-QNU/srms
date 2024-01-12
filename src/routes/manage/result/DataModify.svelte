@@ -21,11 +21,11 @@
 
 	const student_id = $modalStore[0].meta.data.student_id;
 
-	const submitAction = scoreId > 0 ? '?/update' : '?/create';
+	const submitAction = student_id > 0 ? '?/update' : '?/create';
 
 	const supabase: SupabaseClient = $modalStore[0].meta.supabase;
 	const scoreData = $modalStore[0].meta.data;
-	const id_student = $modalStore[0].meta.data.id_student;
+
 	const subject_id = $modalStore[0].meta.data.subject_id;
 	let studentsTable = $modalStore[0].meta.studentsTable;
 	let subjectTable = $modalStore[0].meta.subjectTable;
@@ -68,6 +68,15 @@
 		invalidate('score:reload');
 		modalStore.close();
 	}
+
+	let progress = student_id > 0 ? scoreData?.progress : 0;
+	let midTerm = student_id > 0 ? scoreData?.mid_term : 0;
+	let lastTerm = student_id > 0 ? scoreData?.last_term : 0;
+	let total = student_id > 0 ? progress * 0.1 + midTerm * 0.2 + lastTerm * 0.7 : 0;
+	function calculateTotal() {
+		total = progress * 0.1 + midTerm * 0.2 + lastTerm * 0.7;
+		return total;
+	}
 </script>
 
 {#if $modalStore[0]}
@@ -78,7 +87,7 @@
 		{/if}
 		{#if student_id > 0}
 			<form method="POST" action={submitAction} class="[&>*]:py-2" use:enhance={formEnhance}>
-				<input type="hidden" readonly name="id_student" value={id_student} />
+				<input type="hidden" readonly name="score_id" value={scoreId} />
 
 				<div>
 					<label for="student_name">Tên sinh viên</label>
@@ -112,7 +121,8 @@
 						type="number"
 						id="progress"
 						name="progress"
-						value={scoreData?.progress || 0}
+						bind:value={progress}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -123,7 +133,8 @@
 						type="number"
 						id="mid_term"
 						name="mid_term"
-						value={scoreData?.mid_term || 0}
+						bind:value={midTerm}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -134,7 +145,8 @@
 						type="number"
 						id="last_term"
 						name="last_term"
-						value={scoreData?.last_term || 0}
+						bind:value={lastTerm}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -145,8 +157,9 @@
 						type="number"
 						id="total"
 						name="total"
-						value={scoreData?.total || 0}
+						bind:value={total}
 						{disabled}
+						readonly
 						required
 					/>
 				</div>
@@ -187,7 +200,7 @@
 				<div>
 					<label for="student_name">Tên sinh viên</label>
 
-					<select name="id_student">
+					<select name="student_id">
 						<option>Chọn tên sinh viên</option>
 						{#each studentsTable as item, id}
 							<option value={item.id}>{item.full_name}</option>
@@ -210,7 +223,8 @@
 						type="number"
 						id="progress"
 						name="progress"
-						value={scoreData?.progress || 0}
+						bind:value={progress}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -221,7 +235,8 @@
 						type="number"
 						id="mid_term"
 						name="mid_term"
-						value={scoreData?.mid_term || 0}
+						bind:value={midTerm}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -232,7 +247,8 @@
 						type="number"
 						id="last_term"
 						name="last_term"
-						value={scoreData?.last_term || 0}
+						bind:value={lastTerm}
+						on:input={calculateTotal}
 						{disabled}
 						required
 					/>
@@ -243,9 +259,10 @@
 						type="number"
 						id="total"
 						name="total"
-						value={scoreData?.total || 0}
-						{disabled}
+						bind:value={total}
 						required
+						readonly
+						{disabled}
 					/>
 				</div>
 				<div>

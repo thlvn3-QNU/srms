@@ -44,13 +44,12 @@ export const actions = {
 		const id = await data.get('id');
 		const name = await data.get('subject');
 		const credits = await data.get('credits');
-
+		
 		const subject = {
 			id,
 			name,
 			credits
 		};
-
 		const { error } = await supabase.from('subject').upsert({
 			...subject,
 			updated_at: new Date()
