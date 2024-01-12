@@ -3,14 +3,21 @@
 	import { onMount } from 'svelte';
 	import { redirect } from '@sveltejs/kit';
 	import { invalidate, goto } from '$app/navigation';
-	import { Toast, initializeStores, getModalStore, storePopup, type ModalComponent, Modal } from '@skeletonlabs/skeleton';
+	import {
+		Toast,
+		initializeStores,
+		getModalStore,
+		storePopup,
+		type ModalComponent,
+		Modal
+	} from '@skeletonlabs/skeleton';
 	import { AngleDownSolid, RightFromBracketSolid } from 'svelte-awesome-icons';
 	import { AppShell, AppBar, type PopupSettings, popup } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import Drawer from '$lib/Drawer.svelte';
-	
+
 	initializeStores();
-	
+
 	export let data;
 
 	let { supabase, session, profile } = data;
@@ -64,13 +71,14 @@
 	<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<!-- TODO: set text to page title-->
-				<strong class="text-xl">CSRM</strong>
+				<h3 class="h3">Quản lý điểm sinh viên</h3>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="hover:variant-ghost" use:popup={popupClick}>
-					{#if profile?.full_name} {profile?.full_name}
-					{:else if session?.user.email} {session?.user.email}
+					{#if profile?.full_name}
+						{profile?.full_name}
+					{:else if session?.user.email}
+						{session?.user.email}
 					{/if}
 
 					<AngleDownSolid size="14" />
@@ -79,7 +87,7 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<Drawer {profile}/>
+		<Drawer {profile} />
 	</svelte:fragment>
 
 	<div class="p-6 h-full">

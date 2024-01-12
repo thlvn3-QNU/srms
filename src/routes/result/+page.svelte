@@ -46,8 +46,12 @@
 </script>
 
 <div class="[&>*]:py-4">
-	<p class="text-center">Chọn điểm để xem chi tiết</p>
-	<div class="content">
-		<Table source={displayTable} interactive={true} on:selected={entrySelect} />
-	</div>
+	{#if score && score?.length <= 0}
+		<p class="text-center">Bạn chưa có điểm trên hệ thống.</p>
+	{:else}
+		<p class="text-center">Chọn điểm để xem chi tiết</p>
+		<div class="content">
+			<Table source={displayTable} interactive={true} on:selected={entrySelect} />
+		</div>
+	{/if}
 </div>
