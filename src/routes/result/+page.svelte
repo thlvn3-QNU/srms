@@ -24,7 +24,7 @@
 	};
 
 	const displayTable: TableSource = {
-		head: ['Tên học phân', 'Tín chỉ', 'Điểm 10', 'Điểm 4', 'Đánh giá'],
+		head: ['Tên học phần', 'Tín chỉ', 'Điểm 10', 'Điểm 4', 'Đánh giá'],
 		body: tableMapperValues(scoreTable, ['name', 'credits', 'total', 'total_four', 'total_rating']),
 		// HACKS
 		meta: tableMapperValues(scoreTable, [
