@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import {
+		getModalStore,
+		Table,
+		tableMapperValues,
+		type ModalSettings,
+		type TableSource
+	} from '@skeletonlabs/skeleton';
+	import DetailsModal from './Details.svelte';
+
+	const modalStore = getModalStore();
 
 	export let data;
 
@@ -8,29 +17,37 @@
 
 	let scoreTable: any[] = score as any[];
 
-	const displayTable: TableSource = {
-		head: ['Mã môn học', 'Tên môn học', 'Số tín chỉ', 'Điểm quá trình', 'Điểm giữa kì'],
-		body: tableMapperValues(scoreTable, ['student_id', 'full_name', 'class_name', 'name', 'total']),
-		meta: tableMapperValues(scoreTable, ['id'])
+	const details: ModalSettings = {
+		type: 'component',
+		component: { ref: DetailsModal },
+		meta: {}
 	};
 
-	function entrySelect(meta: any) {}
+	const displayTable: TableSource = {
+		head: ['Tên học phân', 'Tín chỉ', 'Điểm 10', 'Điểm 4', 'Đánh giá'],
+		body: tableMapperValues(scoreTable, ['name', 'credits', 'total', 'total_four', 'total_rating']),
+		// HACKS
+		meta: tableMapperValues(scoreTable, [
+			'name',
+			'credits',
+			'progress',
+			'mid_term',
+			'last_term',
+			'total',
+			'total_four',
+			'total_rating'
+		])
+	};
+
+	function entrySelect(meta: any) {
+		details.meta = meta.detail;
+		modalStore.trigger(details);
+	}
 </script>
 
 <div class="[&>*]:py-4">
-	<div class="header flex flex-row justify-between w-full">
-		<span>
-			<h2 class="h2">Điểm thi</h2>
-		</span>
-		<span>
-			<input type="text" name="search-box" id="search-box" placeholder="Tìm kiếm..." disabled />
-		</span>
-	</div>
-	<div class="content">
-		<Table source={displayTable} interactive={true} on:selected={entrySelect} />
-	</div>
+	<p class="text-center">Chọn điểm để xem chi tiết</p>
 	<div class="content">
 		<Table source={displayTable} interactive={true} on:selected={entrySelect} />
 	</div>
 </div>
-
