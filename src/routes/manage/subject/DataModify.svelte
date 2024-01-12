@@ -13,8 +13,6 @@
 	import { invalidate } from '$app/navigation';
 	import { TrashCanRegular } from 'svelte-awesome-icons';
 
-	export let parent: SvelteComponent;
-
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
 
