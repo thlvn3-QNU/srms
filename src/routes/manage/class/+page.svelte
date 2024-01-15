@@ -1,81 +1,80 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
-	import { ArrowDownAZSolid, PlusSolid } from 'svelte-awesome-icons';
-	import modal from './modal.svelte';
-
-	export let data;
-
+	import type { ModalSettings, TableSource, ToastSettings } from '@skeletonlabs/skeleton';
+	import { Table, tableMapperValues, getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+	import { PlusSolid } from 'svelte-awesome-icons';
+	import DataModify from './DataModify.svelte';
+	import type { PageData } from './$types';
+	
 	const modalStore = getModalStore();
+	const toastStore = getToastStore();
 
-	const ADD_CLASS_MODAL = 1,
-		EDIT_CLASS_MODAL = 2,
-		DELETE_CLASS_MODAL = 3;
+	export let data: PageData;
 
-	let { supabase, session, classes, subjects, teachers } = data;
-	$: ({ supabase, session, classes, subjects, teachers } = data);
+	let { supabase, session, score, students, subject } = data;
+	$: ({ supabase, session, score, students, subject } = data);
+	let scoreTable: any[] = score as any[];
+	$: scoreTable = score as any[];
 
-	let classTable: any[];
-	$: classTable = classes as any[];
+	let studentsTable: any[] = students as any[];
+	$: studentsTable = students as any[];
 
-	let fieldNames: string[] = ['ID', 'Tên học phần', 'Giáo viên', '', ''];
-	let fieldValues: string[] = ['id', 'name', 'full_name'];
+	let subjectTable: any[] = subject as any[];
+	$: subjectTable = subject as any[];
 
-	let sortBy = { col: 'id', ascending: true };
-
-	function entry(index: number) {
-		goto(`class/details?id=${index}`);
+	let displayTable: TableSource;
+	$: displayTable = {
+		head: ['ID', 'MSSV', 'Họ tên', 'Môn học', 'Quá trình', 'Giữa kì', 'Cuối kì', 'Tổng điểm'],
+		body: tableMapperValues(scoreTable, [
+			'id',
+			'student_id',
+			'full_name',
+			'name',
+			'progress',
+			'mid_term',
+			'last_term',
+			'total'
+		])
+	};
+	const modal: ModalSettings = {
+		type: 'component',
+		component: { ref: DataModify },
+		meta: { supabase, id: 0, studentsTable: studentsTable, subjectTable: subjectTable }
+	};
+	let toast;
+	let interactive = true;
+	const t: ToastSettings = {
+		message: 'Đang tải dữ liệu....',
+		background: 'variant-filled-tertiary',
+		hideDismiss: true,
+		timeout: 99999
+	};
+	async function entrySelect(meta: any) {
+		toast = toastStore.trigger(t);
+		interactive = false;
+		const { data: scoreData } = await supabase
+			.from('score')
+			.select(
+				'id, student_id ,...student_id(student_id, full_name),subject_id, ...subject_id(name) ,progress , mid_term , last_term, total '
+			)
+			.eq('id', meta.detail[0])
+			.single();
+		modal.meta.id = meta.detail[0];
+		modal.meta.data = scoreData;
+		modalStore.trigger(modal);
+		toastStore.close(toast);
+		interactive = true;
 	}
-
-	function openModal(type: number, index: number) {
-		let UpcomingMeta: any;
-
-		if (type === ADD_CLASS_MODAL) {
-			UpcomingMeta = {
-				type: ADD_CLASS_MODAL,
-				data: {
-					subjects: subjects,
-					teachers: teachers
-				}
-			};
-		} else if (type === EDIT_CLASS_MODAL) {
-			UpcomingMeta = {
-				type: EDIT_CLASS_MODAL,
-				data: {
-					id: classTable[index].id,
-					current_subject: classTable[index].subject_id,
-					current_teacher: classTable[index].teacher_id,
-					subjects: subjects,
-					teachers: teachers
-				}
-			};
-		} else {
-			UpcomingMeta = {
-				type: DELETE_CLASS_MODAL,
-				data: { id: classTable[index].id }
-			};
-		}
-
-		let DataModal: ModalSettings = {
-			type: 'component',
-			component: { ref: modal },
-			meta: UpcomingMeta
-		};
-
-		modalStore.trigger(DataModal);
+	function handelInsertResult() {
+		modal.meta.id = -1;
+		modal.meta.data = {};
+		modalStore.trigger(modal);
 	}
-
 	let SearchQuery: string = '';
-
-	// A pure Javascript function. The dev is dumb. Deal with it lol
 	function searchTable() {
 		let query = SearchQuery.toUpperCase().trim();
-
 		let RowList = document.getElementsByTagName('tr');
-
 		for (let i = 0; i < RowList.length; i++) {
 			let CellList = RowList[i].getElementsByTagName('td');
-
 			for (let j = 0; j < CellList.length; j++) {
 				if (CellList[j] && CellList[j].innerHTML.toUpperCase().indexOf(query) > -1) {
 					RowList[i].style.display = '';
@@ -86,32 +85,15 @@
 			}
 		}
 	}
-
-	function SortTable(column: any) {
-		if (sortBy.col === column) {
-			sortBy.ascending = !sortBy.ascending;
-		} else {
-			sortBy.col = column;
-			sortBy.ascending = true;
-		}
-
-		var collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-		let compare = (a: any, b: any) => collator.compare(a[column], b[column]);
-
-		classTable = classTable.sort(compare);
-		if (!sortBy.ascending) classTable = classTable.reverse();
-	}
-
-	//SortTable('id'); // Why did this cause Internal Error?????????
 </script>
 
 <div class="[&>*]:py-4">
 	<div class="header flex flex-row justify-between w-full">
 		<span>
-			<h2 class="h2">Danh sách lớp học</h2>
+			<h2 class="h2">Điểm thi</h2>
 		</span>
 		<span class="flex gap-4">
-			<button class="variant-filled" on:click={() => openModal(ADD_CLASS_MODAL, -1)}
+			<button class="variant-filled" on:click={handelInsertResult}
 				><PlusSolid size="16" />Thêm</button
 			>
 			<input
@@ -125,48 +107,6 @@
 		</span>
 	</div>
 	<div class="content">
-		<table class="table table-hover">
-			<thead class="text-center">
-				<tr>
-					{#each fieldNames as fName, i}
-						<th>
-							{fName}
-							{#if fName !== ''}
-								<ArrowDownAZSolid on:click={() => SortTable(fieldValues[i])} class="float-right" />
-							{/if}
-						</th>
-					{/each}
-				</tr>
-			</thead>
-
-			<tbody>
-				{#each classTable as classRow, i}
-					<tr>
-						<td>{classRow?.id ?? 'Trống'}</td>
-						<td>{classRow?.name ?? 'Trống'}</td>
-						<td>{classRow?.full_name ?? 'Trống'}</td>
-						<td>
-							<button
-								type="button"
-								class="hover:variant-filled-error bg-blue-500"
-								on:click={() => entry(classRow.id)}>Danh sách</button
-							>
-						</td><td>
-							<button
-								type="button"
-								class="hover:variant-filled-error bg-green-500"
-								on:click={() => openModal(EDIT_CLASS_MODAL, i)}>Sửa</button
-							>
-
-							<button
-								type="button"
-								class="hover:variant-filled-error bg-red-500"
-								on:click={() => openModal(DELETE_CLASS_MODAL, i)}>Xoá</button
-							>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+		<Table source={displayTable} {interactive} on:selected={entrySelect} />
 	</div>
 </div>

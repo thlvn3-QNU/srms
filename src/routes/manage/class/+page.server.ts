@@ -1,59 +1,110 @@
-import { redirect, fail } from '@sveltejs/kit';
-import type { Actions } from './$types'
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
-    depends('class:reload');
 
 	if (!session) {
 		throw redirect(303, '/');
 	}
 
-    const { data: classes } = await supabase
-        .from('class')
-        .select('id, subject_id, ...subject_id(name), teacher_id, ...teacher_id(full_name)');
+	depends('score:reload');
 
-    const { data: subjects } = await supabase
-        .from('subject')
-        .select('id, name');
-    
-    const { data: teachers } = await supabase
-        .from('profiles')
-        .select('id, full_name')
-		.eq('permission', 1);
+	let score = await getData(supabase);
+	let students = await getStudents(supabase);
+	let subject = await getSubject(supabase);
 
-    return { session, classes, subjects, teachers };
+	return { session, score, students, subject };
 };
 
 export const actions = {
-    upsert: async ({ locals: { supabase }, request }) => {
-		const formData = await request.formData();
+	create: async ({ request, locals: { supabase, getSession } }) => {
+		const data = await request.formData();
+		const student_id = await data.get('student_id');
+		const subject_id = await data.get('subject_id');
+		const progress = await data.get('progress');
+		const mid_term = await data.get('mid_term');
+		const last_term = await data.get('last_term');
+		const total = await data.get('total');
 
-		let classInput = {
-            id: formData.get('id'),
-            subject_id: formData.get('subject_id'),
-            teacher_id: formData.get('teacher_id')
-        };
-		
-		let { error } = await supabase
-		.from('class')
-		.upsert(classInput);
+		let score = {
+			student_id,
+			subject_id,
+			progress,
+			mid_term,
+			last_term,
+			total
+		};
+
+		const { error } = await supabase.from('score').insert({
+			...score,
+			updated_at: new Date()
+		});
 
 		if (error) {
 			console.log(error);
-			return fail(400, { error: true });
+			return fail(400, { score, error: true });
 		}
-    },
 
-	delete: async ({ locals: { supabase }, request }) => {
-		const formData = await request.formData();
+		return score;
+	},
+	update: async ({ request, locals: { supabase, getSession } }) => {
+		const data = await request.formData();
+		const id = await data.get('score_id');
+		const subject_id = await data.get('subject_id');
+		const progress = await data.get('progress');
+		const mid_term = await data.get('mid_term');
+		const last_term = await data.get('last_term');
+		const total = await data.get('total');
+		const score = {
+			id,
+			subject_id,
+			progress,
+			mid_term,
+			last_term,
+			total
+		};
 
-		let { error } = await supabase.from('class').delete().eq('id', formData.get('id'));
+		const { error } = await supabase
+			.from('score')
+			.update({
+				...score,
+				updated_at: new Date()
+			})
+			.eq('id', id);
 
 		if (error) {
 			console.log(error);
-			return fail(400, { error: true });
+			return fail(400, { score, error: true });
 		}
+
+		return score;
 	}
-} satisfies Actions;
+};
+
+async function getData(supabase: SupabaseClient) {
+	const { data: score } = await supabase
+		.from('score')
+		.select(
+			'id, student_id, ...student_id(student_id, full_name),subject_id, ...subject_id(name) ,progress , mid_term , last_term, total '
+		)
+		.order('id', { ascending: true });
+
+	return score;
+}
+
+async function getStudents(supabase: SupabaseClient) {
+	const { data: students } = await supabase
+		.from('profiles')
+		.select('id, full_name, student_id')
+		.eq('permission', 0);
+
+	return students;
+}
+
+async function getSubject(supabase: SupabaseClient) {
+	const { data: subject } = await supabase.from('subject').select('id, name ');
+
+	return subject;
+}
