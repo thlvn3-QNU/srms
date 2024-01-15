@@ -1,3 +1,4 @@
+<!-- test comment -->
 <script lang="ts">
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
