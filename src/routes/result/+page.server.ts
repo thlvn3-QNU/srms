@@ -1,4 +1,5 @@
 // @ts-nocheck - Using undocumented TS method from Supabase
+//test comment
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
