@@ -1,6 +1,6 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-
+import type { SupabaseClient } from '@supabase/supabase-js';
 export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 
@@ -8,14 +8,7 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase, getSes
 		throw redirect(303, '/');
 	}
 
-	depends('subject:reload');
-
-
-	const { data: score } = await supabase
-		.from('score')
-		.select(
-			`id, ...student_id(student_id, full_name, class_name), ...subject_id(name),...class_id(name),progress , mid_term , last_term, total `
-		);
+	depends('score:reload');
 
 	let score = await getData(supabase);
 	let students = await getStudents(supabase)
@@ -36,7 +29,7 @@ export const actions = {
 	
 
 		let score = {
-			student_id,	
+			student_id,
 			subject_id,
 			progress,
 			mid_term,
@@ -46,7 +39,7 @@ export const actions = {
 		};
 
 		const { error } = await supabase.from('score').insert({
-		    ...score,
+		  ...score,
 			updated_at: new Date()
 		});
 
@@ -59,7 +52,6 @@ export const actions = {
 	},
 	update: async ({ request, locals: { supabase, getSession } }) => {
 		const data = await request.formData();
-		// const student_id = await data.get('student_id');
 		const id = await data.get('score_id');
 		const subject_id =  await data.get('subject_id');
 		const progress =  await data.get('progress');
@@ -76,10 +68,10 @@ export const actions = {
 		};
 
 		const { error } = await supabase.from('score').update({
-		      progress, mid_term , last_term , total,
+			...score,
 			updated_at: new Date()
-		}).eq('id' ,id);
-	
+		}).eq('id', id);
+
 		if (error) {
 			console.log(error);
 			return fail(400, { score, error: true });
@@ -97,12 +89,26 @@ async function getData(supabase: SupabaseClient) {
 		)
 		.order('id', { ascending: true });
 
+	return score;
+}
 
-	const { data: classData } = await supabase.from('class').select(`id , subject_id ,name  `);
+async function getStudents (supabase: SupabaseClient) {
+	const { data: students } = await supabase
+		.from('profiles')
+		.select(
+			'id, full_name, student_id'
+		)
+		.eq('permission' , 0)
 
-	const { data: profiles } = await supabase.from('profiles').select(`id ,student_id , full_name `);
+	return students;
+}
 
-	const { data: subject } = await supabase.from('subject').select(`id ,name  `);
-
-	return { session, score, classData, profiles, subject };
-};
+async function getSubject (supabase: SupabaseClient) {
+	const { data: subject } = await supabase
+		.from('subject')
+		.select(
+			'id, name '
+		)
+	
+	return subject;
+}
